@@ -17,6 +17,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     height: 39,
+    flex: 1,
   },
   textStyle: {
     color: GRAY,
