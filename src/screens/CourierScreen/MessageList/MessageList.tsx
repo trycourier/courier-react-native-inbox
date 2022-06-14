@@ -1,20 +1,10 @@
-import React, { useEffect, useReducer, useState, useMemo } from 'react';
-import { Events, Messages } from '@trycourier/client-graphql';
+import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextStyle, FlatList } from 'react-native';
-import {
-  messagesInitialState,
-  messagesReducer,
-} from '../MessagesStore/MessagesReducer';
-import {
-  getMessagesInitAction,
-  getMessagesSuccessAction,
-  messageStopLoadingAction,
-  setMessagesAction,
-} from '../MessagesStore/MessagesActions';
+import { useMessage } from '../../../hooks/useMessage';
 import type {
-  GetMessagesSuccessPayloadType,
+  isReadType,
   MessageType,
-} from '../MessagesStore/Messagestypes';
+} from '../../../hooks/useMessage/MessagesStore/Messagestypes';
 import { FullScreenIndicator, Message } from '../../../components';
 import { BOLD } from '../../../constants/fontSize';
 import { DIVIDER_COLOR, GRAY, LIGHT_GRAY } from '../../../constants/colors';
@@ -22,11 +12,10 @@ import {
   BottomModal,
   BottomModalOption,
 } from '../../../components/BottomModal';
-import { useBrand, useCourier } from '../../../context/CourierProvider';
+import { useBrand } from '../../../context/CourierProvider';
 
 type PropType = {
-  isRead?: boolean;
-  getAll?: boolean;
+  isRead: isReadType;
 };
 
 const styles = StyleSheet.create({
@@ -77,25 +66,25 @@ const styles = StyleSheet.create({
   },
 });
 
-function MessageList({ isRead, getAll }: PropType) {
-  const { courierClient } = useCourier();
-  const { getMessages } = Messages({ client: courierClient });
-  // todo: handle events
-  // eslint-disable-next-line
-  const { trackEvent } = Events({ client: courierClient });
+function MessageList({ isRead }: PropType) {
+  const {
+    renderMessages,
+    isLoading,
+    fetchMoreMessages,
+    setSelectedMessage,
+    selectedMessage,
+    markAsReadEvent,
+    markAsUnreadEvent,
+  } = useMessage({
+    isRead,
+  });
 
-  const [{ messages, isLoading, startCursor }, dispatch] = useReducer(
-    messagesReducer,
-    messagesInitialState
-  );
   const {
     emptyState: { textColor, text: emptyText },
   } = useBrand();
 
   const [isBottomModalOpen, setIsBottomModalOpen] = useState(false);
-  const [selectedMessage, setSelectedMessage] = useState<
-    MessageType | undefined
-  >();
+
   const openBottomModal = () => setIsBottomModalOpen(true);
   const closeBottomModal = () => {
     setIsBottomModalOpen(false);
@@ -105,93 +94,26 @@ function MessageList({ isRead, getAll }: PropType) {
     openBottomModal();
   };
 
-  const markAsReadEvent = async (currentMessage: MessageType) => {
-    try {
-      await trackEvent(currentMessage.content.trackingIds.readTrackingId);
-      const updatedMessages = messages.map((message) => {
-        if (message.id === currentMessage.id) return { ...message, read: true };
-        return message;
-      });
+  const handleMarkMessageRead = () => {
+    markAsReadEvent().finally(() => {
       closeBottomModal();
-      dispatch(setMessagesAction({ payload: { messages: updatedMessages } }));
-    } catch (e) {
-      console.log({ e });
-    }
-  };
-
-  const markAsUnreadEvent = async (currentMessage: MessageType) => {
-    try {
-      await trackEvent(currentMessage.content.trackingIds.unreadTrackingId);
-      const updatedMessages = messages.map((message) => {
-        if (message.id === currentMessage.id)
-          return { ...message, read: false };
-        return message;
-      });
-      closeBottomModal();
-      dispatch(setMessagesAction({ payload: { messages: updatedMessages } }));
-    } catch (e) {
-      console.log({ e });
-    }
-  };
-
-  const getMessagesInit = () => dispatch(getMessagesInitAction());
-  const getMessageSuccess = ({
-    payload,
-  }: {
-    payload: GetMessagesSuccessPayloadType;
-  }) => dispatch(getMessagesSuccessAction({ payload }));
-  const messagesStopLoading = () => dispatch(messageStopLoadingAction());
-
-  const getQueryParams = () => {
-    if (getAll) return undefined;
-    return { isRead };
-  };
-
-  const renderMessages = useMemo(() => {
-    if (getAll) {
-      return messages;
-    }
-    if (isRead === false) {
-      return messages.filter((message) => !message.read);
-    }
-  }, [JSON.stringify(messages)]);
-
-  async function fetchData(fetchAfter?: string) {
-    try {
-      getMessagesInit();
-      const messagesResp = await getMessages(getQueryParams(), fetchAfter);
-      if (messagesResp) {
-        const payload = {
-          ...messagesResp,
-          messages: [...messages, ...messagesResp.messages],
-        };
-        getMessageSuccess({ payload });
-      }
-    } catch (err) {
-      messagesStopLoading();
-    }
-  }
-
-  const resetMessages = () => {
-    getMessageSuccess({
-      payload: { appendMessages: false, messages: [], startCursor: null },
     });
   };
 
-  useEffect(() => {
-    resetMessages();
-    fetchData();
-    return resetMessages;
-  }, []);
+  const handleMarkMessageUnread = () => {
+    markAsUnreadEvent().finally(() => {
+      closeBottomModal();
+    });
+  };
 
   const emptyTextStyle: TextStyle = {
     ...styles.textStyle,
     color: textColor,
   };
 
-  if (messages.length === 0 && isLoading) return <FullScreenIndicator />;
+  if (renderMessages.length === 0 && isLoading) return <FullScreenIndicator />;
 
-  if (messages.length === 0 && isLoading === false) {
+  if (renderMessages.length === 0 && isLoading === false) {
     return (
       <View style={styles.emptyTextContainer}>
         <Text style={emptyTextStyle}>{emptyText}</Text>
@@ -213,11 +135,7 @@ function MessageList({ isRead, getAll }: PropType) {
             <Message message={item} onPress={handleMessageSelection} />
           )}
           keyExtractor={({ id }) => id}
-          onEndReached={() => {
-            if (startCursor !== null) {
-              fetchData(startCursor);
-            }
-          }}
+          onEndReached={fetchMoreMessages}
           onEndReachedThreshold={0.01}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
@@ -229,22 +147,18 @@ function MessageList({ isRead, getAll }: PropType) {
             <>
               <View style={styles.additionalMessageActionContainer}>
                 <Text style={styles.additionalActionTextStyle}>
-                  Addional Message Actions
+                  Additional Message Actions
                 </Text>
               </View>
               <View>
                 {selectedMessage.read ? (
                   <BottomModalOption
-                    onPress={() => {
-                      markAsUnreadEvent(selectedMessage);
-                    }}
+                    onPress={handleMarkMessageUnread}
                     option="Mark as Unread"
                   />
                 ) : (
                   <BottomModalOption
-                    onPress={() => {
-                      markAsReadEvent(selectedMessage);
-                    }}
+                    onPress={handleMarkMessageRead}
                     option="Mark as read"
                   />
                 )}
@@ -256,10 +170,5 @@ function MessageList({ isRead, getAll }: PropType) {
     </>
   );
 }
-
-MessageList.defaultProps = {
-  isRead: false,
-  getAll: false,
-};
 
 export default MessageList;

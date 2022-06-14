@@ -74,3 +74,5 @@ export type InterfaceMessageReducerActionType =
   | GetMessagesSuccess
   | MessagesStopLoading
   | SetMessages;
+
+export type isReadType = boolean | 'all';

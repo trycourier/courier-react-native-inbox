@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native';
 import React from 'react';
 import formatDistanceToNowStrict from 'date-fns/formatDistanceToNowStrict';
-import type { MessageType } from 'src/screens/CourierScreen/MessagesStore/Messagestypes';
+import type { MessageType } from 'src/hooks/useMessage/MessagesStore/Messagestypes';
 import { SvgDot } from '../SvgDot';
 import { SEMI_BOLD } from '../../constants/fontSize';
 import { GRAY } from '../../constants/colors';

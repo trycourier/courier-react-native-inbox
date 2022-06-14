@@ -111,7 +111,7 @@ function CourierScreen() {
             </Tabs>
           </View>
           <View style={styles.flatListContainerStyle}>
-            {activeTab === 'All notifications' && <MessageList getAll />}
+            {activeTab === 'All notifications' && <MessageList isRead="all" />}
             {activeTab === 'Unread' && <MessageList isRead={false} />}
           </View>
         </View>
