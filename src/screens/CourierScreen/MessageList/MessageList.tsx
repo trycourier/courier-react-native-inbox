@@ -1,13 +1,6 @@
 import React, { useEffect, useReducer, useState } from 'react';
-import { Messages } from '@trycourier/client-graphql';
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextStyle,
-  TouchableOpacity,
-  FlatList,
-} from 'react-native';
+import { Events, Messages } from '@trycourier/client-graphql';
+import { StyleSheet, Text, View, TextStyle, FlatList } from 'react-native';
 import {
   messagesInitialState,
   messagesReducer,
@@ -23,17 +16,16 @@ import type {
 } from '../MessagesStore/Messagestypes';
 import { FullScreenIndicator, Message } from '../../../components';
 import { BOLD } from '../../../constants/fontSize';
+import { DIVIDER_COLOR, GRAY, LIGHT_GRAY } from '../../../constants/colors';
 import {
-  DIVIDER_COLOR,
-  GRAY,
-  LIGHT_GRAY,
-  STORM_BLUE,
-} from '../../../constants/colors';
-import { BottomModal } from '../../../components/BottomModal';
+  BottomModal,
+  BottomModalOption,
+} from '../../../components/BottomModal';
 import { useBrand, useCourier } from '../../../context/CourierProvider';
 
 type PropType = {
   isRead?: boolean;
+  getAll?: boolean;
 };
 
 const styles = StyleSheet.create({
@@ -82,25 +74,22 @@ const styles = StyleSheet.create({
     color: GRAY,
     fontSize: 10,
   },
-  markReadStyle: {
-    color: STORM_BLUE,
-    fontSize: 14,
-    paddingTop: 14,
-    paddingBottom: 23,
-  },
 });
 
-function MessageList({ isRead }: PropType) {
+function MessageList({ isRead, getAll }: PropType) {
   const { courierClient } = useCourier();
   const { getMessages } = Messages({ client: courierClient });
+  // todo: handle events
+  // eslint-disable-next-line
+  const { trackEvent } = Events({ client: courierClient });
+
   const [{ messages, isLoading, startCursor }, dispatch] = useReducer(
     messagesReducer,
-    messagesInitialState,
+    messagesInitialState
   );
   const {
     emptyState: { textColor, text: emptyText },
   } = useBrand();
-  // const { openModal, selectMessage } = useBottomModal();
 
   const [isBottomModalOpen, setIsBottomModalOpen] = useState(false);
   const [selectedMessage, setSelectedMessage] = useState<
@@ -124,7 +113,7 @@ function MessageList({ isRead }: PropType) {
   const messagesStopLoading = () => dispatch(messageStopLoadingAction());
 
   const getQueryParams = () => {
-    if (typeof isRead === 'undefined') return undefined;
+    if (getAll) return undefined;
     return { isRead };
   };
 
@@ -154,7 +143,7 @@ function MessageList({ isRead }: PropType) {
     resetMessages();
     fetchData();
     return resetMessages;
-  }, [isRead]);
+  }, []);
 
   const emptyTextStyle: TextStyle = {
     ...styles.textStyle,
@@ -205,9 +194,14 @@ function MessageList({ isRead }: PropType) {
                 </Text>
               </View>
               <View>
-                <TouchableOpacity>
-                  <Text style={styles.markReadStyle}>Mark as read</Text>
-                </TouchableOpacity>
+                {selectedMessage.read ? (
+                  <BottomModalOption
+                    onPress={() => {}}
+                    option="Mark as Unread"
+                  />
+                ) : (
+                  <BottomModalOption onPress={() => {}} option="Mark as read" />
+                )}
               </View>
             </>
           )}
@@ -219,6 +213,7 @@ function MessageList({ isRead }: PropType) {
 
 MessageList.defaultProps = {
   isRead: false,
+  getAll: false,
 };
 
 export default MessageList;

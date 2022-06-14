@@ -146,6 +146,7 @@
     "scripts/",
     "webpack.config.js",
     "bootstrap.js",
-    "babel.config.js"
+    "babel.config.js",
+    "metro.config.js"
   ]
 }

@@ -18,7 +18,9 @@ function DotText({ value }: { value: number }) {
   });
   const getTextStyle = () => {
     const textStyle: TextStyle[] = [styles.textStyle];
-    if (value.toString().length > 1) return [styles.textStyle, styles.biggerTextStyle];
+    if (value.toString().length > 1) {
+      return [styles.textStyle, styles.biggerTextStyle];
+    }
     return textStyle;
   };
   const getValue = () => {

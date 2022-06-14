@@ -15,9 +15,7 @@ const getColor = ({ show, dotColor }: { show: boolean; dotColor: string }) => {
   return dotColor;
 };
 
-function SvgDot({
-  size, color, style, show = true, value,
-}: Prop) {
+function SvgDot({ size, color, style, show = true, value }: Prop) {
   const styles = StyleSheet.create({
     container: {
       backgroundColor: getColor({ show, dotColor: color }),

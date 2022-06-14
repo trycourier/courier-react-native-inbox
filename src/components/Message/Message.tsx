@@ -61,9 +61,11 @@ function Message({ onPress, message }: Prop) {
   const {
     colors: { primary },
   } = useBrand();
-  const getFormattedDate = () => formatDistanceToNowStrict(new Date(createdAt), {
-    addSuffix: true,
-  });
+  const getFormattedDate = () =>
+    formatDistanceToNowStrict(new Date(createdAt), {
+      addSuffix: true,
+    });
+
   return (
     <View style={styles.overAll}>
       <View style={styles.messageContainer}>

@@ -43,15 +43,17 @@ function CourierProvider({
   brandId,
   linearGradientProvider,
 }: Props) {
-  const [brandConfig, setBrandsConfig] = useState<BrandConfig>(brandInitialConfig);
+  const [brandConfig, setBrandsConfig] =
+    useState<BrandConfig>(brandInitialConfig);
   const [isBrandLoading, setIsBrandLoading] = useState(false);
 
   const courierClient = useMemo(
-    () => createCourierClient({
-      clientKey,
-      userId,
-    }),
-    [],
+    () =>
+      createCourierClient({
+        clientKey,
+        userId,
+      }),
+    []
   );
 
   const brandApis = Brands({ client: courierClient });

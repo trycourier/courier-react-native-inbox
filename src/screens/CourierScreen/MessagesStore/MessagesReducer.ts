@@ -17,7 +17,7 @@ export const messagesInitialState: MessagesReducerState = {
 
 export const messagesReducer = (
   state: MessagesReducerState = { ...messagesInitialState },
-  action: InterfaceMessageReducerActionType,
+  action: InterfaceMessageReducerActionType
 ) => {
   switch (action.type) {
     case GET_MESSAGES_INIT:

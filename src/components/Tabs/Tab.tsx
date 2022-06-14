@@ -1,6 +1,4 @@
-import {
-  Text, StyleSheet, TextStyle, TouchableOpacity,
-} from 'react-native';
+import { Text, StyleSheet, TextStyle, TouchableOpacity } from 'react-native';
 import React from 'react';
 import type { ViewStyle } from 'react-native';
 import { GRAY } from '../../constants/colors';
