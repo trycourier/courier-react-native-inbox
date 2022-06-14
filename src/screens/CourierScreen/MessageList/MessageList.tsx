@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useEffect, useReducer, useState, useMemo } from 'react';
 import { Events, Messages } from '@trycourier/client-graphql';
 import { StyleSheet, Text, View, TextStyle, FlatList } from 'react-native';
 import {
@@ -9,6 +9,7 @@ import {
   getMessagesInitAction,
   getMessagesSuccessAction,
   messageStopLoadingAction,
+  setMessagesAction,
 } from '../MessagesStore/MessagesActions';
 import type {
   GetMessagesSuccessPayloadType,
@@ -104,6 +105,35 @@ function MessageList({ isRead, getAll }: PropType) {
     openBottomModal();
   };
 
+  const markAsReadEvent = async (currentMessage: MessageType) => {
+    try {
+      await trackEvent(currentMessage.content.trackingIds.readTrackingId);
+      const updatedMessages = messages.map((message) => {
+        if (message.id === currentMessage.id) return { ...message, read: true };
+        return message;
+      });
+      closeBottomModal();
+      dispatch(setMessagesAction({ payload: { messages: updatedMessages } }));
+    } catch (e) {
+      console.log({ e });
+    }
+  };
+
+  const markAsUnreadEvent = async (currentMessage: MessageType) => {
+    try {
+      await trackEvent(currentMessage.content.trackingIds.unreadTrackingId);
+      const updatedMessages = messages.map((message) => {
+        if (message.id === currentMessage.id)
+          return { ...message, read: false };
+        return message;
+      });
+      closeBottomModal();
+      dispatch(setMessagesAction({ payload: { messages: updatedMessages } }));
+    } catch (e) {
+      console.log({ e });
+    }
+  };
+
   const getMessagesInit = () => dispatch(getMessagesInitAction());
   const getMessageSuccess = ({
     payload,
@@ -116,6 +146,15 @@ function MessageList({ isRead, getAll }: PropType) {
     if (getAll) return undefined;
     return { isRead };
   };
+
+  const renderMessages = useMemo(() => {
+    if (getAll) {
+      return messages;
+    }
+    if (isRead === false) {
+      return messages.filter((message) => !message.read);
+    }
+  }, [JSON.stringify(messages)]);
 
   async function fetchData(fetchAfter?: string) {
     try {
@@ -169,7 +208,7 @@ function MessageList({ isRead, getAll }: PropType) {
           </View>
         )}
         <FlatList
-          data={messages}
+          data={renderMessages}
           renderItem={({ item }) => (
             <Message message={item} onPress={handleMessageSelection} />
           )}
@@ -196,11 +235,18 @@ function MessageList({ isRead, getAll }: PropType) {
               <View>
                 {selectedMessage.read ? (
                   <BottomModalOption
-                    onPress={() => {}}
+                    onPress={() => {
+                      markAsUnreadEvent(selectedMessage);
+                    }}
                     option="Mark as Unread"
                   />
                 ) : (
-                  <BottomModalOption onPress={() => {}} option="Mark as read" />
+                  <BottomModalOption
+                    onPress={() => {
+                      markAsReadEvent(selectedMessage);
+                    }}
+                    option="Mark as read"
+                  />
                 )}
               </View>
             </>

@@ -2,6 +2,7 @@ import type {
   GET_MESSAGES_INIT,
   GET_MESSAGES_SUCCESS,
   MESSAGES_STOP_LOADING,
+  SET_MESSAGES,
 } from './MessagesActions';
 
 type BlocksEntity = {
@@ -43,6 +44,11 @@ export interface GetMessagesSuccessResp {
   startCursor?: null | string;
 }
 
+export interface SetMessages {
+  type: typeof SET_MESSAGES;
+  payload: { messages: MessageType[] };
+}
+
 export interface MessagesReducerState extends GetMessagesSuccessResp {
   isLoading: boolean;
 }
@@ -66,4 +72,5 @@ export interface MessagesStopLoading {
 export type InterfaceMessageReducerActionType =
   | GetMessages
   | GetMessagesSuccess
-  | MessagesStopLoading;
+  | MessagesStopLoading
+  | SetMessages;

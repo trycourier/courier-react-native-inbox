@@ -26,7 +26,8 @@
     "import/prefer-default-export": "off",
     "react/jsx-no-constructed-context-values": "off",
     "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
-    "import/no-extraneous-dependencies": "warn"
+    "import/no-extraneous-dependencies": "warn",
+    "consistent-return": "off"
   },
   "globals": {
     "React": true,

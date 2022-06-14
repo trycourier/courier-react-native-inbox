@@ -1,4 +1,5 @@
 import {
+  SET_MESSAGES,
   GET_MESSAGES_INIT,
   GET_MESSAGES_SUCCESS,
   MESSAGES_STOP_LOADING,
@@ -35,6 +36,11 @@ export const messagesReducer = (
       return {
         ...state,
         isLoading: false,
+      };
+    case SET_MESSAGES:
+      return {
+        ...state,
+        ...action.payload,
       };
     default:
       return {
