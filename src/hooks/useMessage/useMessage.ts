@@ -80,9 +80,8 @@ const useMessage = ({ isRead }: Props) => {
 
   const markAsReadEvent = async () => {
     if (typeof selectedMessage === 'undefined') {
-      return Promise.resolve({ success: false });
+      return Promise.reject();
     }
-
     try {
       await trackEvent(selectedMessage.content.trackingIds.readTrackingId);
       const updatedMessages = messages.map((message) => {
@@ -94,15 +93,14 @@ const useMessage = ({ isRead }: Props) => {
       return Promise.resolve({ success: true });
     } catch (e) {
       console.log({ e });
-      return Promise.resolve({ success: false });
+      return Promise.reject();
     }
   };
 
   const markAsUnreadEvent = async () => {
     if (typeof selectedMessage === 'undefined') {
-      return Promise.resolve({ success: false });
+      return Promise.reject();
     }
-
     try {
       await trackEvent(selectedMessage.content.trackingIds.unreadTrackingId);
       const updatedMessages = messages.map((message) => {
@@ -114,7 +112,7 @@ const useMessage = ({ isRead }: Props) => {
       return Promise.resolve({ success: true });
     } catch (e) {
       console.log({ e });
-      return Promise.resolve({ success: false });
+      return Promise.reject();
     }
   };
 
