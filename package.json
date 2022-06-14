@@ -143,6 +143,9 @@
   "eslintIgnore": [
     "node_modules/",
     "lib/",
-    "scripts/"
+    "scripts/",
+    "webpack.config.js",
+    "bootstrap.js",
+    "babel.config.js"
   ]
 }
