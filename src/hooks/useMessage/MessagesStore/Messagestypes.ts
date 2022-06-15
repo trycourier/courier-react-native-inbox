@@ -11,14 +11,14 @@ type BlocksEntity = {
   __typename: string;
 };
 
-type TrackingIds = {
+export interface TrackingIds {
   archiveTrackingId: string;
   clickTrackingId: string;
   deliverTrackingId: string;
   readTrackingId: string;
   unreadTrackingId: string;
   __typename: string;
-};
+}
 
 type Content = {
   title: string;

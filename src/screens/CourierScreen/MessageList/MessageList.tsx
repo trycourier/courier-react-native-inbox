@@ -64,6 +64,11 @@ const styles = StyleSheet.create({
     color: GRAY,
     fontSize: 10,
   },
+  bottomModalOptionContainer: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
 
 function MessageList({ isRead }: PropType) {
@@ -150,7 +155,7 @@ function MessageList({ isRead }: PropType) {
                   Additional Message Actions
                 </Text>
               </View>
-              <View>
+              <View style={styles.bottomModalOptionContainer}>
                 {selectedMessage.read ? (
                   <BottomModalOption
                     onPress={handleMarkMessageUnread}

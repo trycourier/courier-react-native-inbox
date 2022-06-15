@@ -9,6 +9,11 @@ const styles = StyleSheet.create({
     paddingTop: 14,
     paddingBottom: 23,
   },
+  touchableOpacityContainer: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
 
 type PropType = {
@@ -18,7 +23,10 @@ type PropType = {
 
 function BottomModalOption({ onPress, option }: PropType) {
   return (
-    <TouchableOpacity onPress={onPress}>
+    <TouchableOpacity
+      onPress={onPress}
+      style={styles.touchableOpacityContainer}
+    >
       <Text style={styles.markReadStyle}>{option}</Text>
     </TouchableOpacity>
   );

@@ -9,6 +9,7 @@ import type {
   GetMessagesSuccessPayloadType,
   isReadType,
   MessageType,
+  TrackingIds,
 } from './MessagesStore/Messagestypes';
 import {
   getMessagesInitAction,
@@ -78,43 +79,41 @@ const useMessage = ({ isRead }: Props) => {
     }
   };
 
-  const markAsReadEvent = async () => {
-    if (typeof selectedMessage === 'undefined') {
-      return Promise.reject();
-    }
-    try {
-      await trackEvent(selectedMessage.content.trackingIds.readTrackingId);
-      const updatedMessages = messages.map((message) => {
-        if (message.id === selectedMessage.id)
-          return { ...message, read: true };
-        return message;
-      });
-      dispatch(setMessagesAction({ payload: { messages: updatedMessages } }));
-      return Promise.resolve({ success: true });
-    } catch (e) {
-      console.log({ e });
-      return Promise.reject();
-    }
-  };
+  const genericReadUnreadEvent =
+    ({
+      key,
+      updatedReadValue,
+    }: {
+      key: keyof TrackingIds;
+      updatedReadValue: boolean;
+    }) =>
+    async () => {
+      if (typeof selectedMessage === 'undefined') {
+        return Promise.reject();
+      }
+      try {
+        await trackEvent(selectedMessage.content.trackingIds[key]);
+        const updatedMessages = messages.map((message) => {
+          if (message.id === selectedMessage.id)
+            return { ...message, read: updatedReadValue };
+          return message;
+        });
+        dispatch(setMessagesAction({ payload: { messages: updatedMessages } }));
+        return Promise.resolve({ success: true });
+      } catch (e) {
+        console.log({ e });
+        return Promise.reject();
+      }
+    };
 
-  const markAsUnreadEvent = async () => {
-    if (typeof selectedMessage === 'undefined') {
-      return Promise.reject();
-    }
-    try {
-      await trackEvent(selectedMessage.content.trackingIds.unreadTrackingId);
-      const updatedMessages = messages.map((message) => {
-        if (message.id === selectedMessage.id)
-          return { ...message, read: false };
-        return message;
-      });
-      dispatch(setMessagesAction({ payload: { messages: updatedMessages } }));
-      return Promise.resolve({ success: true });
-    } catch (e) {
-      console.log({ e });
-      return Promise.reject();
-    }
-  };
+  const markAsReadEvent = genericReadUnreadEvent({
+    key: 'readTrackingId',
+    updatedReadValue: true,
+  });
+  const markAsUnreadEvent = genericReadUnreadEvent({
+    key: 'unreadTrackingId',
+    updatedReadValue: false,
+  });
 
   useEffect(() => {
     resetMessages();

@@ -31,7 +31,7 @@ function BottomModal({
       visible={open}
       transparent
       onRequestClose={onClose}
-      animationType="slide"
+      animationType="none"
     >
       <TouchableOpacity
         style={styles.outerContainer}
