@@ -1,5 +1,5 @@
 {
-  "name": "react-native-trycourier",
+  "name": "courier-react-native-inbox",
   "version": "0.1.0",
   "description": "a react native library for tryCourier integration",
   "main": "lib/commonjs/index",
@@ -13,7 +13,7 @@
     "android",
     "ios",
     "cpp",
-    "react-native-trycourier.podspec",
+    "courier-react-native-inbox.podspec",
     "!lib/typescript/example",
     "!android/build",
     "!ios/build",
@@ -38,13 +38,13 @@
     "ios",
     "android"
   ],
-  "repository": "https://github.com/FahadAminShovon/react-native-trycourier",
+  "repository": "https://github.com/trycourier/courier-react-native-inbox",
   "author": "fahad991 <shovonfahad991@gmail.com> (https://github.com/FahadAminShovon)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/FahadAminShovon/react-native-trycourier/issues"
+    "url": "https://github.com/trycourier/courier-react-native-inbox/issues"
   },
-  "homepage": "https://github.com/FahadAminShovon/react-native-trycourier#readme",
+  "homepage": "https://github.com/trycourier/courier-react-native-inbox#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },

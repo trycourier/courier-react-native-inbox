@@ -1,17 +1,17 @@
-# react-native-trycourier
+# courier-react-native-inbox
 
 a react native library for trycourier integration
 
 ## Installation
 
 ```sh
-npm install react-native-trycourier
+npm install courier-react-native-inbox
 ```
 
 ## Usage
 
 ```js
-import { multiply } from "react-native-trycourier";
+import { multiply } from "courier-react-native-inbox";
 
 // ...
 
