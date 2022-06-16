@@ -7,6 +7,7 @@ import { SEMI_BOLD } from '../../constants/fontSize';
 import { GRAY } from '../../constants/colors';
 import { BurgerIcon } from '../BurgerIcon';
 import { useBrand } from '../../context/CourierProvider';
+import { OpenButtonUrl } from '../OpenButtonUrl';
 
 const styles = StyleSheet.create({
   overAll: {
@@ -45,6 +46,9 @@ const styles = StyleSheet.create({
     color: GRAY,
     marginRight: 8,
   },
+  actionButtonContainerStyle: {
+    marginTop: 8,
+  },
 });
 
 type Prop = {
@@ -54,7 +58,7 @@ type Prop = {
 
 function Message({ onPress, message }: Prop) {
   const {
-    content: { title, body },
+    content: { title, blocks },
     read,
     created: createdAt,
   } = message;
@@ -66,13 +70,32 @@ function Message({ onPress, message }: Prop) {
       addSuffix: true,
     });
 
+  const renderBody = blocks?.find((block) => block.type === 'text')?.text ?? '';
+  const { url: actionButtonUrl = '', text: actionButtonText } = blocks?.find(
+    (block) => block.type === 'action'
+  ) ?? {
+    url: '',
+    text: '',
+  };
+
+  const showBody = () => Boolean(renderBody);
+  const showButton = () =>
+    Boolean(actionButtonText) && Boolean(actionButtonUrl);
+
   return (
     <View style={styles.overAll}>
       <View style={styles.messageContainer}>
         <SvgDot size={8} color={primary} style={styles.dotStyle} show={!read} />
         <View>
           <Text style={styles.headerTextStyle}>{title}</Text>
-          <Text style={styles.subHeaderStyle}>{body}</Text>
+          {showBody() && (
+            <Text style={styles.subHeaderStyle}>{renderBody}</Text>
+          )}
+          {showButton() && (
+            <View style={styles.actionButtonContainerStyle}>
+              <OpenButtonUrl title={actionButtonText} url={actionButtonUrl} />
+            </View>
+          )}
         </View>
       </View>
       <View style={styles.fromNowContainer}>

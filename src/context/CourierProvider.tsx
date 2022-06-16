@@ -29,11 +29,13 @@ type CourierContextType = {
   brandConfig: BrandConfig;
   isBrandLoading: boolean;
   linearGradient?: React.ElementType;
+  isBrandLoadingError?: boolean;
 };
 
 const CourierContext = createContext<CourierContextType>({
   brandConfig: brandInitialConfig,
   isBrandLoading: false,
+  isBrandLoadingError: false,
 });
 
 function CourierProvider({
@@ -45,7 +47,8 @@ function CourierProvider({
 }: Props) {
   const [brandConfig, setBrandsConfig] =
     useState<BrandConfig>(brandInitialConfig);
-  const [isBrandLoading, setIsBrandLoading] = useState(false);
+  const [isBrandLoading, setIsBrandLoading] = useState(true);
+  const [isBrandLoadingError, setIsBrandLoadingError] = useState(false);
 
   const courierClient = useMemo(
     () =>
@@ -69,6 +72,7 @@ function CourierProvider({
         }
       } catch (err) {
         console.log({ err });
+        setIsBrandLoadingError(true);
       } finally {
         setIsBrandLoading(false);
       }
@@ -83,6 +87,7 @@ function CourierProvider({
         brandConfig,
         isBrandLoading,
         linearGradient: linearGradientProvider as React.ElementType,
+        isBrandLoadingError,
       }}
     >
       {children}
@@ -109,6 +114,7 @@ export const useBrand = () => {
       },
     },
     isBrandLoading,
+    isBrandLoadingError,
   } = useContext(CourierContext);
   return {
     colors,
@@ -117,5 +123,6 @@ export const useBrand = () => {
     widgetBackground,
     isBrandLoading,
     disableCourierFooter,
+    isBrandLoadingError,
   };
 };

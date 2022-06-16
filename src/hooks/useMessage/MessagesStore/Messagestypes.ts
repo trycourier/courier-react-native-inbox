@@ -6,8 +6,9 @@ import type {
 } from './MessagesActions';
 
 type BlocksEntity = {
-  type: string;
+  type: 'action' | 'text';
   text: string;
+  url?: string;
   __typename: string;
 };
 

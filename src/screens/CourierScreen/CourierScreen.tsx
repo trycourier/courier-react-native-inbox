@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Messages } from '@trycourier/client-graphql';
 import { FullScreenIndicator, SvgDot } from '../../components';
 import { WHITE } from '../../constants/colors';
-import { SEMI_BOLD } from '../../constants/fontSize';
+import { BOLD, SEMI_BOLD } from '../../constants/fontSize';
 import { Tab, Tabs } from '../../components/Tabs';
 import MessageList from './MessageList/MessageList';
 import { Footer } from '../../components/Footer';
@@ -47,6 +47,17 @@ const styles = StyleSheet.create({
   flatListContainerStyle: {
     flex: 1,
   },
+  brandLoadingFailedStyle: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 16,
+  },
+  brandLoadingFailTextStyle: {
+    fontSize: 16,
+    fontWeight: BOLD,
+    textAlign: 'center',
+  },
 });
 
 function CourierScreen() {
@@ -64,6 +75,7 @@ function CourierScreen() {
     borderRadius,
     colors: { primary },
     widgetBackground: { topColor, bottomColor },
+    isBrandLoadingError,
   } = useBrand();
   const normalizedBorderRadius = Number(borderRadius.replace('px', ''));
 
@@ -88,6 +100,15 @@ function CourierScreen() {
   if (typeof linearGradient === 'undefined') return null;
   const LinearGradient = linearGradient as any;
   if (isBrandLoading) return <FullScreenIndicator />;
+  if (isBrandLoadingError)
+    return (
+      <View style={styles.brandLoadingFailedStyle}>
+        <Text style={styles.brandLoadingFailTextStyle}>
+          An error has occurred. The inbox could not be loaded
+        </Text>
+      </View>
+    );
+
   return (
     <LinearGradient colors={[topColor, bottomColor]} style={styles.container}>
       <View style={styles.overAll}>
