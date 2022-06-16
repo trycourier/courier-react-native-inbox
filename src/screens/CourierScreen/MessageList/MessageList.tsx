@@ -80,6 +80,7 @@ function MessageList({ isRead }: PropType) {
     selectedMessage,
     markAsReadEvent,
     markAsUnreadEvent,
+    updateMessageRead,
   } = useMessage({
     isRead,
   });
@@ -137,7 +138,13 @@ function MessageList({ isRead }: PropType) {
         <FlatList
           data={renderMessages}
           renderItem={({ item }) => (
-            <Message message={item} onPress={handleMessageSelection} />
+            <Message
+              message={item}
+              onPress={handleMessageSelection}
+              onActionSuccess={() => {
+                updateMessageRead({ read: true, selectedId: item.id });
+              }}
+            />
           )}
           keyExtractor={({ id }) => id}
           onEndReached={fetchMoreMessages}

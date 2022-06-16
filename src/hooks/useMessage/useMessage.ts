@@ -79,6 +79,20 @@ const useMessage = ({ isRead }: Props) => {
     }
   };
 
+  const updateMessageRead = ({
+    read,
+    selectedId,
+  }: {
+    read: boolean;
+    selectedId: string;
+  }) => {
+    const updatedMessages = messages.map((message) => {
+      if (message.id === selectedId) return { ...message, read };
+      return message;
+    });
+    dispatch(setMessagesAction({ payload: { messages: updatedMessages } }));
+  };
+
   const genericReadUnreadEvent =
     ({
       key,
@@ -93,12 +107,10 @@ const useMessage = ({ isRead }: Props) => {
       }
       try {
         await trackEvent(selectedMessage.content.trackingIds[key]);
-        const updatedMessages = messages.map((message) => {
-          if (message.id === selectedMessage.id)
-            return { ...message, read: updatedReadValue };
-          return message;
+        updateMessageRead({
+          read: updatedReadValue,
+          selectedId: selectedMessage.id,
         });
-        dispatch(setMessagesAction({ payload: { messages: updatedMessages } }));
         return Promise.resolve({ success: true });
       } catch (e) {
         console.log({ e });
@@ -139,6 +151,7 @@ const useMessage = ({ isRead }: Props) => {
     markAsUnreadEvent,
     renderMessages,
     fetchMoreMessages,
+    updateMessageRead,
   };
 };
 

@@ -22,6 +22,8 @@ const styles = StyleSheet.create({
   messageContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    flex: 1,
+    marginRight: 8,
   },
 
   headerTextStyle: {
@@ -46,15 +48,21 @@ const styles = StyleSheet.create({
   },
   actionButtonContainerStyle: {
     marginTop: 8,
+    flexDirection: 'row',
+  },
+  notificationBodyContainer: { flex: 1 },
+  flexRow: {
+    flexDirection: 'row',
   },
 });
 
 type Prop = {
   onPress: (_msg: MessageType) => void;
   message: MessageType;
+  onActionSuccess: () => void;
 };
 
-function Message({ onPress, message }: Prop) {
+function Message({ onPress, message, onActionSuccess }: Prop) {
   const {
     content: { title, blocks },
     read,
@@ -63,8 +71,10 @@ function Message({ onPress, message }: Prop) {
   const {
     colors: { primary },
   } = useBrand();
+
+  console.log('brand', useBrand());
   const getFormattedDate = () =>
-    formatDistanceToNowStrict(new Date(createdAt), {});
+    formatDistanceToNowStrict(new Date(createdAt), { addSuffix: false });
 
   const renderBody = blocks?.find((block) => block.type === 'text')?.text ?? '';
   const { url: actionButtonUrl = '', text: actionButtonText } = blocks?.find(
@@ -82,14 +92,20 @@ function Message({ onPress, message }: Prop) {
     <View style={styles.overAll}>
       <View style={styles.messageContainer}>
         <SvgDot size={8} color={primary} style={styles.dotStyle} show={!read} />
-        <View>
+        <View style={styles.notificationBodyContainer}>
           <Text style={styles.headerTextStyle}>{title}</Text>
           {showBody() && (
             <Text style={styles.subHeaderStyle}>{renderBody}</Text>
           )}
           {showButton() && (
-            <View style={styles.actionButtonContainerStyle}>
-              <OpenButtonUrl title={actionButtonText} url={actionButtonUrl} />
+            <View style={styles.flexRow}>
+              <View style={styles.actionButtonContainerStyle}>
+                <OpenButtonUrl
+                  title={actionButtonText}
+                  url={actionButtonUrl}
+                  onSuccess={onActionSuccess}
+                />
+              </View>
             </View>
           )}
         </View>
