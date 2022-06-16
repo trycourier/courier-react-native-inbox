@@ -1,5 +1,5 @@
 {
-  "name": "courier-react-native-inbox",
+  "name": "@trycourier/react-native-inbox",
   "version": "0.1.0",
   "description": "a react native library for tryCourier integration",
   "main": "lib/commonjs/index",
@@ -13,7 +13,7 @@
     "android",
     "ios",
     "cpp",
-    "courier-react-native-inbox.podspec",
+    "@trycourier/react-native-inbox.podspec",
     "!lib/typescript/example",
     "!android/build",
     "!ios/build",

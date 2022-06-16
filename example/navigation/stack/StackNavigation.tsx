@@ -1,6 +1,6 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { CourierScreen } from 'courier-react-native-inbox';
+import { CourierScreen } from '@trycourier/react-native-inbox';
 import { RootStackParamList } from './stackNavigation.types';
 
 import { LandingScreen } from '../../screens/LandingScreen';

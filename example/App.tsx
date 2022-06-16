@@ -1,7 +1,7 @@
 import React from 'react';
 import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
-import { CourierProvider } from 'courier-react-native-inbox';
+import { CourierProvider } from '@trycourier/react-native-inbox';
 // eslint-disable-next-line
 import { CLIENT_KEY, USER_ID, BRAND_ID } from '@env';
 import { LinearGradient } from 'expo-linear-gradient';
