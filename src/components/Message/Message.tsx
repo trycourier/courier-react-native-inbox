@@ -15,7 +15,6 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     marginBottom: 6,
     paddingVertical: 16,
-    paddingRight: 16,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -44,7 +43,6 @@ const styles = StyleSheet.create({
   fromNowText: {
     fontSize: 10,
     color: GRAY,
-    marginRight: 8,
   },
   actionButtonContainerStyle: {
     marginTop: 8,
@@ -66,9 +64,7 @@ function Message({ onPress, message }: Prop) {
     colors: { primary },
   } = useBrand();
   const getFormattedDate = () =>
-    formatDistanceToNowStrict(new Date(createdAt), {
-      addSuffix: true,
-    });
+    formatDistanceToNowStrict(new Date(createdAt), {});
 
   const renderBody = blocks?.find((block) => block.type === 'text')?.text ?? '';
   const { url: actionButtonUrl = '', text: actionButtonText } = blocks?.find(

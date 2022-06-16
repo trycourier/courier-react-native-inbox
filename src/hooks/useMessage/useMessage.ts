@@ -106,8 +106,6 @@ const useMessage = ({ isRead }: Props) => {
       }
     };
 
-  console.log('messages', { messages });
-
   const markAsReadEvent = genericReadUnreadEvent({
     key: 'readTrackingId',
     updatedReadValue: true,
