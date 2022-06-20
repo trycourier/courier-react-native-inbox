@@ -20,6 +20,7 @@ import {
 
 type Props = {
   isRead: isReadType;
+  setMessagesCount: React.Dispatch<React.SetStateAction<number>>;
 };
 
 const getQueryParams = (isRead: isReadType) => {
@@ -27,9 +28,9 @@ const getQueryParams = (isRead: isReadType) => {
   return { isRead };
 };
 
-const useMessage = ({ isRead }: Props) => {
+const useMessage = ({ isRead, setMessagesCount }: Props) => {
   const { courierClient } = useCourier();
-  const { getMessages } = Messages({ client: courierClient });
+  const { getMessages, getMessageCount } = Messages({ client: courierClient });
   const { trackEvent } = Events({ client: courierClient });
 
   const [{ messages, isLoading, startCursor }, dispatch] = useReducer(
@@ -56,6 +57,10 @@ const useMessage = ({ isRead }: Props) => {
 
   async function fetchData(fetchAfter?: string) {
     try {
+      if (!fetchAfter) {
+        const messageCount = await getMessageCount(getQueryParams(isRead));
+        setMessagesCount(messageCount);
+      }
       getMessagesInit();
       const messagesResp = await getMessages(
         getQueryParams(isRead),
@@ -90,6 +95,9 @@ const useMessage = ({ isRead }: Props) => {
       if (message.id === selectedId) return { ...message, read };
       return message;
     });
+    if (isRead === false && read === true) {
+      setMessagesCount((prev) => prev - 1);
+    }
     dispatch(setMessagesAction({ payload: { messages: updatedMessages } }));
   };
 

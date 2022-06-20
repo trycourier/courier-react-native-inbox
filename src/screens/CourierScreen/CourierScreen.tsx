@@ -1,7 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
-import { Messages } from '@trycourier/client-graphql';
 import { FullScreenIndicator, SvgDot } from '../../components';
 import { WHITE } from '../../constants/colors';
 import { BOLD, SEMI_BOLD } from '../../constants/fontSize';
@@ -61,13 +60,15 @@ const styles = StyleSheet.create({
 });
 
 function CourierScreen() {
-  const { courierClient, linearGradient } = useCourier();
-  const { getMessageCount } = Messages({ client: courierClient });
+  const { linearGradient } = useCourier();
   const [messagesCount, setMessagesCount] = useState(0);
   const [activeTab, setActiveTab] = useState<
     typeof UNREAD_TAB_NAME | typeof ALL_NOTIFICATIONS_TAB_NAME
   >('Unread');
-  const setUnreadActive = () => setActiveTab('Unread');
+  const setUnreadActive = () => {
+    setMessagesCount(0);
+    setActiveTab('Unread');
+  };
   const setAllNotificationsActive = () => setActiveTab('All notifications');
 
   const {
@@ -78,18 +79,6 @@ function CourierScreen() {
     isBrandLoadingError,
   } = useBrand();
   const normalizedBorderRadius = Number(borderRadius.replace('px', ''));
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const messageCount = await getMessageCount();
-        setMessagesCount(messageCount);
-      } catch (err) {
-        console.log({ err });
-      }
-    }
-    fetchData();
-  }, []);
 
   const headerContainerStyle = {
     ...styles.headerContainer,
@@ -132,8 +121,12 @@ function CourierScreen() {
             </Tabs>
           </View>
           <View style={styles.flatListContainerStyle}>
-            {activeTab === 'All notifications' && <MessageList isRead="all" />}
-            {activeTab === 'Unread' && <MessageList isRead={false} />}
+            {activeTab === 'All notifications' && (
+              <MessageList isRead="all" setMessagesCount={setMessagesCount} />
+            )}
+            {activeTab === 'Unread' && (
+              <MessageList isRead={false} setMessagesCount={setMessagesCount} />
+            )}
           </View>
         </View>
         <Footer />

@@ -3,4 +3,5 @@ declare module '@env' {
   export const CLIENT_KEY: string;
   export const USER_ID: string;
   export const BRAND_ID: string;
+  export const SHOW_LOGS: string;
 }

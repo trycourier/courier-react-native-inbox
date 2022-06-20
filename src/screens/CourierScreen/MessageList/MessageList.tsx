@@ -16,6 +16,7 @@ import { useBrand } from '../../../context/CourierProvider';
 
 type PropType = {
   isRead: isReadType;
+  setMessagesCount: React.Dispatch<React.SetStateAction<number>>;
 };
 
 const styles = StyleSheet.create({
@@ -71,7 +72,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function MessageList({ isRead }: PropType) {
+function MessageList({ isRead, setMessagesCount }: PropType) {
   const {
     renderMessages,
     isLoading,
@@ -83,6 +84,7 @@ function MessageList({ isRead }: PropType) {
     updateMessageRead,
   } = useMessage({
     isRead,
+    setMessagesCount,
   });
 
   const {
