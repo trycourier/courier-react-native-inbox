@@ -61,11 +61,11 @@ import and use `CourierScreen` anywhere in your child component
 import { CourierScreen } from '@trycourier/react-native-inbox';
 
 const Demo = () => {
-	return (
-		<View>
-			<Text>StackNavigation</Text>
-		</View>
-	)
+  return (
+    <View>
+      <CourierScreen/>
+    </View>
+  )
 }
 ```
 
