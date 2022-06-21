@@ -38,6 +38,13 @@ const CourierContext = createContext<CourierContextType>({
   isBrandLoadingError: false,
 });
 
+const verifyAllValidProperties = (obj: BrandConfig) =>
+  Object.keys(brandInitialConfig).every(
+    (key) =>
+      Object.prototype.hasOwnProperty.call(obj, key) &&
+      Boolean(obj[key as keyof typeof brandInitialConfig])
+  );
+
 function CourierProvider({
   children,
   userId,
@@ -66,10 +73,11 @@ function CourierProvider({
       setIsBrandLoading(true);
       try {
         const brands = await brandApis.getBrand(brandId);
-        if (brands) {
-          const typedBrands: BrandConfig = brands;
-          setBrandsConfig(typedBrands);
+        if (!brands || !verifyAllValidProperties(brands)) {
+          throw new Error('Invalid brand value');
         }
+        const typedBrands: BrandConfig = brands;
+        setBrandsConfig(typedBrands);
       } catch (err) {
         console.log({ err });
         setIsBrandLoadingError(true);

@@ -1,7 +1,8 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet, Image } from 'react-native';
 import React from 'react';
 import { LIGHT_GRAY } from '../../constants/colors';
 import { useBrand } from '../../context/CourierProvider';
+import poweredByCourierLogo from '../../assets/PoweredByCourier.png';
 
 const styles = StyleSheet.create({
   container: {
@@ -18,7 +19,7 @@ function Footer() {
   if (disableCourierFooter) return null;
   return (
     <View style={styles.container}>
-      <Text>Powered by Courier</Text>
+      <Image source={poweredByCourierLogo} />
     </View>
   );
 }
