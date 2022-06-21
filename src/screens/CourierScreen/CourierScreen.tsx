@@ -69,7 +69,10 @@ function CourierScreen() {
     setMessagesCount(0);
     setActiveTab('Unread');
   };
-  const setAllNotificationsActive = () => setActiveTab('All notifications');
+  const setAllNotificationsActive = () => {
+    setMessagesCount(0);
+    setActiveTab('All notifications');
+  };
 
   const {
     isBrandLoading,
