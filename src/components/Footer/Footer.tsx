@@ -1,7 +1,7 @@
 import { View, StyleSheet, Image } from 'react-native';
 import React from 'react';
 import { LIGHT_GRAY } from '../../constants/colors';
-import { useBrand } from '../../context/CourierProvider';
+import { useBrand } from '../../context/CourierReactNativeProvider';
 import poweredByCourierLogo from '../../assets/PoweredByCourier.png';
 
 const styles = StyleSheet.create({

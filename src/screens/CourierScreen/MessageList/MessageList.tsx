@@ -12,7 +12,7 @@ import {
   BottomModal,
   BottomModalOption,
 } from '../../../components/BottomModal';
-import { useBrand } from '../../../context/CourierProvider';
+import { useBrand } from '../../../context/CourierReactNativeProvider';
 
 type PropType = {
   isRead: isReadType;

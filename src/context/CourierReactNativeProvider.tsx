@@ -16,7 +16,7 @@ type LinearGradientType = Omit<
   'type' | 'key' | 'props'
 >;
 
-type Props = {
+export type Props = {
   children: JSX.Element | JSX.Element[];
   userId: string;
   clientKey: string;
@@ -45,7 +45,7 @@ const verifyAllValidProperties = (obj: BrandConfig) =>
       Boolean(obj[key as keyof typeof brandInitialConfig])
   );
 
-function CourierProvider({
+function CourierReactNativeProvider({
   children,
   userId,
   clientKey,
@@ -103,9 +103,9 @@ function CourierProvider({
   );
 }
 
-export default CourierProvider;
+export default CourierReactNativeProvider;
 
-export const useCourier = () => {
+export const useReactNativeCourier = () => {
   const { courierClient, linearGradient } = useContext(CourierContext);
   return { courierClient, linearGradient };
 };

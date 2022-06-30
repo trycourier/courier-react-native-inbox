@@ -7,7 +7,10 @@ import { BOLD, SEMI_BOLD } from '../../constants/fontSize';
 import { Tab, Tabs } from '../../components/Tabs';
 import MessageList from './MessageList/MessageList';
 import { Footer } from '../../components/Footer';
-import { useBrand, useCourier } from '../../context/CourierProvider';
+import {
+  useBrand,
+  useReactNativeCourier,
+} from '../../context/CourierReactNativeProvider';
 
 const UNREAD_TAB_NAME = 'Unread';
 const ALL_NOTIFICATIONS_TAB_NAME = 'All notifications';
@@ -60,7 +63,7 @@ const styles = StyleSheet.create({
 });
 
 function CourierScreen() {
-  const { linearGradient } = useCourier();
+  const { linearGradient } = useReactNativeCourier();
   const [messagesCount, setMessagesCount] = useState(0);
   const [activeTab, setActiveTab] = useState<
     typeof UNREAD_TAB_NAME | typeof ALL_NOTIFICATIONS_TAB_NAME

@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useReducer, useState } from 'react';
 import { Events, Messages } from '@trycourier/client-graphql';
-import { useCourier } from '../../context/CourierProvider';
+import { useCourier } from '@trycourier/react-provider';
+import type { ICourierMessage } from '@trycourier/react-provider';
+import { useReactNativeCourier } from '../../context/CourierReactNativeProvider';
 import {
   messagesInitialState,
   messagesReducer,
@@ -28,10 +30,32 @@ const getQueryParams = (isRead: isReadType) => {
   return { isRead };
 };
 
+const ImessageToMessageTypeConverter = (
+  message: ICourierMessage
+): MessageType => {
+  const convertedMessage: MessageType = {
+    content: {
+      title: message.title as string,
+      body: message.body as string,
+      trackingIds: message.data?.trackingIds ?? {},
+      blocks: message.blocks || [],
+      __typename: '',
+    },
+    id: message.data?.trackingUrl || Math.floor(Math.random() * 1e7).toString(),
+    messageId:
+      message.data?.trackingUrl || Math.floor(Math.random() * 1e7).toString(),
+    created: new Date().toISOString(),
+    read: false,
+    __typename: '',
+  };
+  return convertedMessage;
+};
+
 const useMessage = ({ isRead, setMessagesCount }: Props) => {
-  const { courierClient } = useCourier();
+  const { courierClient } = useReactNativeCourier();
   const { getMessages, getMessageCount } = Messages({ client: courierClient });
   const { trackEvent } = Events({ client: courierClient });
+  const courier = useCourier();
 
   const [{ messages, isLoading, startCursor }, dispatch] = useReducer(
     messagesReducer,
@@ -40,6 +64,17 @@ const useMessage = ({ isRead, setMessagesCount }: Props) => {
   const [selectedMessage, setSelectedMessage] = useState<
     MessageType | undefined
   >();
+
+  useEffect(() => {
+    courier.transport.intercept((message: ICourierMessage) => {
+      // converting ICourierMessage to MessageType
+      const newMessage = ImessageToMessageTypeConverter(message);
+      const updatedMessages = [newMessage, ...messages];
+      dispatch(setMessagesAction({ payload: { messages: updatedMessages } }));
+      setMessagesCount((prev) => prev + 1);
+      return message;
+    });
+  });
 
   const getMessagesInit = () => dispatch(getMessagesInitAction());
   const getMessageSuccess = ({
@@ -92,12 +127,14 @@ const useMessage = ({ isRead, setMessagesCount }: Props) => {
     selectedId: string;
   }) => {
     const updatedMessages = messages.map((message) => {
-      if (message.id === selectedId) return { ...message, read };
+      if (message.id === selectedId) {
+        if (isRead === false && read === true) {
+          setMessagesCount((prev) => prev - 1);
+        }
+        return { ...message, read };
+      }
       return message;
     });
-    if (isRead === false && read === true) {
-      setMessagesCount((prev) => prev - 1);
-    }
     dispatch(setMessagesAction({ payload: { messages: updatedMessages } }));
   };
 
@@ -113,8 +150,10 @@ const useMessage = ({ isRead, setMessagesCount }: Props) => {
       if (typeof selectedMessage === 'undefined') {
         return Promise.reject();
       }
+      const selectedTrackingId = selectedMessage.content.trackingIds[key];
+      if (typeof selectedTrackingId === 'undefined') return Promise.reject();
       try {
-        await trackEvent(selectedMessage.content.trackingIds[key]);
+        await trackEvent(selectedTrackingId);
         updateMessageRead({
           read: updatedReadValue,
           selectedId: selectedMessage.id,
