@@ -1,6 +1,7 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
+import BellIcon from '@trycourier/react-native-inbox/src/components/BellIcon/BellIcon';
 import { CourierScreenNavigationProp } from '../../navigation/stack/stackNavigation.types';
 
 const styles = StyleSheet.create({
@@ -20,7 +21,7 @@ function LandingScreen() {
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={goToCourier}>
-        <Text>Go To Courier Screen</Text>
+        <BellIcon size={50} />
       </TouchableOpacity>
     </View>
   );
