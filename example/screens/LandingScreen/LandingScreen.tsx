@@ -21,7 +21,7 @@ function LandingScreen() {
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={goToCourier}>
-        <BellIcon size={50} />
+        <BellIcon showUnreadMessageCount size="md" />
       </TouchableOpacity>
     </View>
   );

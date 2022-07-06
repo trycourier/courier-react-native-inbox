@@ -5,11 +5,11 @@ import { BOLD } from '../../constants/fontSize';
 
 const MAX_DOT_VALUE = 100;
 
-function DotText({ value }: { value: number }) {
+function DotText({ value, fontSize }: { value: number; fontSize: number }) {
   const styles = StyleSheet.create({
     textStyle: {
       fontWeight: BOLD,
-      fontSize: 18,
+      fontSize,
       color: WHITE,
     },
     biggerTextStyle: {

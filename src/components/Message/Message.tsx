@@ -73,7 +73,6 @@ function Message({ onPress, message, onActionSuccess }: Prop) {
     colors: { primary },
   } = useBrand();
 
-  console.log('brand', useBrand());
   const getFormattedDate = () =>
     formatDistanceToNowStrict(new Date(createdAt), { addSuffix: false });
 
