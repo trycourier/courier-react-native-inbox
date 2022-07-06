@@ -127,7 +127,7 @@
     ]
   },
   "dependencies": {
-    "@trycourier/react-provider": "^1.19.1",
+    "@trycourier/react-provider": "^1.20.0",
     "date-fns": "^2.28.0",
     "localstorage-polyfill": "^1.0.1"
   },

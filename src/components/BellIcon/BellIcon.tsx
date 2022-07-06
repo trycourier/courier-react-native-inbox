@@ -1,6 +1,7 @@
 import { Animated, Easing } from 'react-native';
 import React, { useEffect, useRef } from 'react';
 import { ICourierMessage, useCourier } from '@trycourier/react-provider';
+import { useBrand } from '../../context/CourierReactNativeProvider';
 
 type PropType = {
   size: number;
@@ -10,11 +11,14 @@ function BellIcon({ size }: PropType) {
   if (size < 0) throw new Error('Size can not be less than 0');
   const courier = useCourier();
   const spinValue = useRef(new Animated.Value(0)).current;
+  const {
+    colors: { primary },
+  } = useBrand();
   const stable = () =>
     Animated.timing(spinValue, {
       toValue: 0,
       useNativeDriver: true,
-      duration: 50,
+      duration: 75,
       easing: Easing.ease,
     }).start();
 
@@ -22,17 +26,9 @@ function BellIcon({ size }: PropType) {
     Animated.timing(spinValue, {
       toValue: -0.05,
       useNativeDriver: true,
-      duration: 75,
+      duration: 150,
       easing: Easing.ease,
     }).start(stable);
-
-  const reset1 = () =>
-    Animated.timing(spinValue, {
-      toValue: 0,
-      useNativeDriver: true,
-      duration: 75,
-      easing: Easing.ease,
-    }).start(goRight);
 
   const goLeft = () =>
     Animated.timing(spinValue, {
@@ -40,7 +36,7 @@ function BellIcon({ size }: PropType) {
       useNativeDriver: true,
       duration: 100,
       easing: Easing.ease,
-    }).start(reset1);
+    }).start(goRight);
 
   const spin = spinValue.interpolate({
     inputRange: [-1, 1],
@@ -60,7 +56,7 @@ function BellIcon({ size }: PropType) {
         height: size,
         width: size,
         borderRadius: size / 2,
-        backgroundColor: 'yellow',
+        backgroundColor: primary,
         transform: [
           { translateY: -size / 2 },
           { rotate: spin },
