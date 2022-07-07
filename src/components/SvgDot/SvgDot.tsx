@@ -2,7 +2,7 @@ import { View, StyleSheet, ViewStyle } from 'react-native';
 import React from 'react';
 import DotText from './DotText';
 
-export type Dotsize = 8 | 12 | 26;
+export type Dotsize = 4 | 8 | 12 | 26;
 
 type Prop = {
   size: Dotsize;
