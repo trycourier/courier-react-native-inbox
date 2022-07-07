@@ -5,11 +5,11 @@ a react native library for trycourier integration
 ## Installation
 
 ```sh
-npm install @trycourier/react-native-inbox
+npm install @trycourier/react-native-inbox @react-navigation/native
 ```
 
 ```sh
-yarn add @trycourier/react-native-inbox
+yarn add @trycourier/react-native-inbox @react-navigation/native
 ```
 
 ## Usage 
@@ -28,7 +28,7 @@ import LinearGradient from 'react-native-linear-gradient';
 ### if you are using expo-cli
 
 ```sh
-yarn add react-native-linear-gradient
+yarn add react-native-linear-gradient 
 ```
 ```js
 import { LinearGradient } from 'expo-linear-gradient';
@@ -68,6 +68,26 @@ const Demo = () => {
   )
 }
 ```
+
+### the bellIcon
+
+```jsx
+import { BellIcon } from '@trycourier/react-native-inbox';
+
+function BellIconScreen() {
+  return (
+    <View>
+        <BellIcon showUnreadMessageCount size="md" />
+    </View>
+  );
+}
+```
+|  prop| description | default | type |
+|--|--|--|--|
+|showUnreadMessageCount | shows number of unread messages as badge|	 false | boolean
+| size | sets height and width of the bell icon and badge size| "md" | "md" \| "sm" \| "lg" 
+
+**Note**:  BellIcon must be used as a child component of `NavigationContainer` to work.
 
 you can find a proper implementation example [here](https://github.com/trycourier/courier-react-native-inbox/tree/main/example).
 
