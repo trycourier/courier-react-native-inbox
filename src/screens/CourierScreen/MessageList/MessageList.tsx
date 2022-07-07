@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, TextStyle, FlatList } from 'react-native';
 import { useMessage } from '../../../hooks/useMessage';
 import type {
@@ -82,6 +82,8 @@ function MessageList({ isRead, setMessagesCount }: PropType) {
     markAsReadEvent,
     markAsUnreadEvent,
     updateMessageRead,
+    resetMessages,
+    fetchData,
   } = useMessage({
     isRead,
     setMessagesCount,
@@ -90,6 +92,12 @@ function MessageList({ isRead, setMessagesCount }: PropType) {
   const {
     emptyState: { textColor, text: emptyText },
   } = useBrand();
+
+  useEffect(() => {
+    resetMessages();
+    fetchData();
+    return resetMessages;
+  }, []);
 
   const [isBottomModalOpen, setIsBottomModalOpen] = useState(false);
 

@@ -174,12 +174,6 @@ const useMessage = ({ isRead, setMessagesCount }: Props) => {
     updatedReadValue: false,
   });
 
-  useEffect(() => {
-    resetMessages();
-    fetchData();
-    return resetMessages;
-  }, []);
-
   const renderMessages = useMemo(() => {
     if (isRead === 'all') {
       return messages;
@@ -199,6 +193,8 @@ const useMessage = ({ isRead, setMessagesCount }: Props) => {
     renderMessages,
     fetchMoreMessages,
     updateMessageRead,
+    resetMessages,
+    fetchData,
   };
 };
 
