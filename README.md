@@ -1,3 +1,4 @@
+
 # @trycourier/react-native-inbox"
 
 a react native library for trycourier integration
@@ -86,6 +87,8 @@ function BellIconScreen() {
 |--|--|--|--|
 |showUnreadMessageCount | shows number of unread messages as badge|	 false | boolean
 | size | sets height and width of the bell icon and badge size| "md" | "md" \| "sm" \| "lg" 
+|render| renders custom component| undefined | (_numberOfUnreadMessages: number) => JSX.Element|
+|onMessage| custom function to execute on getting a new Message | undefined | (_numberOfUnreadMessages: number) => void
 
 **Note**:  BellIcon must be used as a child component of `NavigationContainer` to work.
 
