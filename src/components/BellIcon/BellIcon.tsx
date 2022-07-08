@@ -25,6 +25,8 @@ type SizeType = 'sm' | 'md' | 'lg';
 type PropType = {
   size?: SizeType;
   showUnreadMessageCount?: boolean;
+  render?: (_numberOfUnreadMessages: number) => JSX.Element;
+  onMessage?: (_numberOfUnreadMessages: number) => void;
 };
 
 const getNumericSize = (
@@ -42,7 +44,12 @@ const getNumericSize = (
   return { imageSize: SM_SIZE, dotRight: 3, dotTop: 2, dotSize: 8 };
 };
 
-function BellIcon({ size = 'md', showUnreadMessageCount }: PropType) {
+function BellIcon({
+  size = 'md',
+  showUnreadMessageCount,
+  render,
+  onMessage,
+}: PropType) {
   const courier = useCourier();
   const spinValue = useRef(new Animated.Value(0)).current;
   const {
@@ -95,6 +102,7 @@ function BellIcon({ size = 'md', showUnreadMessageCount }: PropType) {
       };
       getUnreadMessages();
       courier.transport.intercept((message: ICourierMessage) => {
+        if (typeof onMessage === 'function') onMessage(messageCount + 1);
         goLeft();
         setTimeout(() => {
           setMessageCount((prev) => prev + 1);
@@ -109,6 +117,8 @@ function BellIcon({ size = 'md', showUnreadMessageCount }: PropType) {
     () => getNumericSize(size),
     [size]
   );
+
+  if (typeof render === 'function') return render(messageCount);
 
   return (
     <View style={{ position: 'relative' }}>
@@ -147,4 +157,6 @@ export default BellIcon;
 BellIcon.defaultProps = {
   size: 'md',
   showUnreadMessageCount: false,
+  render: undefined,
+  onMessage: undefined,
 };
