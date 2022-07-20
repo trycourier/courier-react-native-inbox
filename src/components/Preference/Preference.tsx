@@ -41,10 +41,10 @@ type Props = {
   title: string;
   subtitle: string;
   optionsTitle: string;
-  selected?: boolean;
+  isEnabled?: boolean;
 };
 
-function Preference({ title, subtitle, optionsTitle, selected }: Props) {
+function Preference({ title, subtitle, optionsTitle, isEnabled }: Props) {
   return (
     <View style={styles.overAll}>
       <View style={styles.container}>
@@ -53,17 +53,20 @@ function Preference({ title, subtitle, optionsTitle, selected }: Props) {
           <Text style={styles.subTitleStyle}>{subtitle}</Text>
         </View>
         <Switch
-          value={selected}
+          value={isEnabled}
           trackColor={{
             true: PREFERENCE_SWITCH_ACTIVE_COLOR,
             false: PREFERENCE_SWITCH_INACTIVE_COLOR,
           }}
-          thumbColor={selected ? PREFERENCE_PRIMARY_STYLE : WHITE}
+          thumbColor={isEnabled ? PREFERENCE_PRIMARY_STYLE : WHITE}
         />
       </View>
-      {selected && (
+      {isEnabled && (
         <View style={styles.customizationOptionContainerStyles}>
-          <CustomizeOptions title={optionsTitle} />
+          <CustomizeOptions
+            title={optionsTitle}
+            options={['Email', 'SMS', 'Push']}
+          />
         </View>
       )}
     </View>
@@ -71,7 +74,7 @@ function Preference({ title, subtitle, optionsTitle, selected }: Props) {
 }
 
 Preference.defaultProps = {
-  selected: false,
+  isEnabled: false,
 };
 
 export default Preference;

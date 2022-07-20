@@ -61,7 +61,7 @@ function PreferenceScreen() {
           title="Invitations"
           subtitle="Be notified if you are invited to a group or event."
           optionsTitle="Customize Delivery Channels"
-          selected
+          isEnabled
         />
         <Preference
           title="System Updates"
