@@ -30,8 +30,16 @@ export interface Inapp {
   __typename: string;
 }
 
+export type PreferencesStatusType = 'OPTED_IN' | 'OPTED_OUT' | 'REQUIRED';
+export interface PreferencesTemplateType {
+  defaultStatus: PreferencesStatusType;
+  templateName: string;
+  templateId: string;
+  __typename: string;
+}
+
 export interface BrandConfig {
   colors: Colors;
   inapp: Inapp;
-  preferenceTemplates?: null[] | null;
+  preferenceTemplates: PreferencesTemplateType[];
 }

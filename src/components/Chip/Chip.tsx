@@ -42,8 +42,9 @@ const styles = StyleSheet.create({
 type Prop = {
   title: string;
   isSelected?: boolean;
+  onPress: () => void;
 };
-function Chip({ title, isSelected }: Prop) {
+function Chip({ title, isSelected, onPress }: Prop) {
   const containerStyle: ViewStyle[] = [styles.container];
   const textStyle: TextStyle[] = [styles.textStyle];
   if (isSelected) {
@@ -51,7 +52,7 @@ function Chip({ title, isSelected }: Prop) {
     textStyle.push(styles.selectedChipTextStyle);
   }
   return (
-    <TouchableOpacity style={containerStyle}>
+    <TouchableOpacity style={containerStyle} onPress={onPress}>
       {isSelected && <Image source={tick} style={styles.imageStyle} />}
       <Text style={textStyle}>{title}</Text>
     </TouchableOpacity>

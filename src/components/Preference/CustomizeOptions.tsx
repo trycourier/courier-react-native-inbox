@@ -4,6 +4,7 @@ import { CUSTOMIZATION_OPTIONS_BACKGROUND_COLOR } from '../../constants/colors';
 import { Checkbox } from '../Checkbox';
 import { SEMI_BOLD } from '../../constants/fontSize';
 import { Chip } from '../Chip';
+import type { SelectedOptionType, UpdateSelectedOptionsType } from './types';
 
 const styles = StyleSheet.create({
   container: {
@@ -35,13 +36,25 @@ const styles = StyleSheet.create({
 
 type PropType = {
   title: string;
-  options: string[];
+  options: SelectedOptionType[];
+  selectedOptions: SelectedOptionType[];
+  updateSelectedOptions: UpdateSelectedOptionsType;
+  resetSelectedOptions: () => void;
 };
 
-function CustomizeOptions({ title, options }: PropType) {
+function CustomizeOptions({
+  title,
+  options,
+  selectedOptions,
+  updateSelectedOptions,
+  resetSelectedOptions,
+}: PropType) {
   const [isSelected, setIsSelected] = useState(false);
   const toggleSelected = () => {
     setIsSelected((prev) => !prev);
+    if (!isSelected) {
+      resetSelectedOptions();
+    }
   };
   return (
     <View style={styles.container}>
@@ -59,11 +72,13 @@ function CustomizeOptions({ title, options }: PropType) {
       {isSelected && (
         <View style={styles.optionsContainer}>
           {options.map((option) => (
-            <View style={styles.chipContainerStyle}>
+            <View style={styles.chipContainerStyle} key={option}>
               <Chip
-                key={option}
                 title={option}
-                isSelected={option === options[0]}
+                isSelected={selectedOptions.includes(option)}
+                onPress={() => {
+                  updateSelectedOptions(option);
+                }}
               />
             </View>
           ))}

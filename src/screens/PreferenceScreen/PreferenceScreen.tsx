@@ -1,9 +1,11 @@
 import { Text, Image, StyleSheet, ScrollView, View } from 'react-native';
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
+import { usePreferences } from '@trycourier/react-hooks';
 import oyster from '../../assets/oyster.png';
 import { BOLD, SEMI_BOLD } from '../../constants/fontSize';
 import { GRAY, WHITE } from '../../constants/colors';
 import Preference from '../../components/Preference/Preference';
+import { useBrand } from '../../context/CourierReactNativeProvider';
 
 const OYSTER_IMAGE_SIZE = 54;
 
@@ -42,6 +44,27 @@ const styles = StyleSheet.create({
 });
 
 function PreferenceScreen() {
+  const preferences = usePreferences();
+  useEffect(() => {
+    preferences.fetchRecipientPreferences();
+  }, []);
+
+  const { preferenceTemplates } = useBrand();
+
+  const filteredPreferencesTemplates = useMemo(() => {
+    if (preferences?.recipientPreferences?.length > 0) {
+      return preferenceTemplates.filter((template) =>
+        preferences.recipientPreferences.some(
+          (receipentPreferenceTemplate: any) =>
+            receipentPreferenceTemplate.templateId === template.templateId
+        )
+      );
+    }
+    return [];
+  }, [preferenceTemplates, preferences]);
+
+  const showPreferences = () => filteredPreferencesTemplates.length > 0;
+
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
@@ -57,22 +80,16 @@ function PreferenceScreen() {
         <Text style={[styles.subHeaderStyles, styles.preferenceSavedTimeStyle]}>
           Preferences last saved on Jun 15 at 3:45pm
         </Text>
-        <Preference
-          title="Invitations"
-          subtitle="Be notified if you are invited to a group or event."
-          optionsTitle="Customize Delivery Channels"
-          isEnabled
-        />
-        <Preference
-          title="System Updates"
-          subtitle="Be notified when system updates are made, keeping you up to speed"
-          optionsTitle="Customize Delivery Channels"
-        />
-        <Preference
-          title="Newsletter"
-          subtitle="Be notified about the latest Treva news"
-          optionsTitle="Customize Delivery Channels"
-        />
+        {showPreferences() &&
+          filteredPreferencesTemplates.map((template) => (
+            <Preference
+              key={template.templateId}
+              title={template.templateName}
+              status={template.defaultStatus}
+              subtitle="Be notified if you are invited to a group or event."
+              optionsTitle="Customize Delivery Channels"
+            />
+          ))}
       </View>
     </ScrollView>
   );

@@ -120,6 +120,7 @@ export const useBrand = () => {
         widgetBackground,
         disableCourierFooter,
       },
+      preferenceTemplates = [],
     },
     isBrandLoading,
     isBrandLoadingError,
@@ -132,5 +133,6 @@ export const useBrand = () => {
     isBrandLoading,
     disableCourierFooter,
     isBrandLoadingError,
+    preferenceTemplates,
   };
 };

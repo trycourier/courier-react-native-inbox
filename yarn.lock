@@ -1979,21 +1979,31 @@
   resolved "https://registry.yarnpkg.com/@tootallnate/once/-/once-1.1.2.tgz#ccb91445360179a04e7fe6aff78c00ffc1eeaf82"
   integrity sha512-RbzJvlNzmRq5c3O09UipeuXno4tA1FE6ikOjxZK0tuxVv3412l64l5t1W5pj4+rJq9vpkm/kwiR07aZXnsKPxw==
 
-"@trycourier/client-graphql@^1.20.0":
-  version "1.20.0"
-  resolved "https://registry.yarnpkg.com/@trycourier/client-graphql/-/client-graphql-1.20.0.tgz#2332d98ab864d68645069abe883ce1e7c04b185b"
-  integrity sha512-FXc3jmRW308e1OuxOqLcDSj69BwCDw//2nyInTcwgZniiqSBbO1ea85ndvv6H5jPpbOCxDJrCg4ARGs7FFQO7Q==
+"@trycourier/client-graphql@^1.24.1":
+  version "1.24.1"
+  resolved "https://registry.yarnpkg.com/@trycourier/client-graphql/-/client-graphql-1.24.1.tgz#8140ede4aed1c05caa0c3efccb3269d0ccbe9573"
+  integrity sha512-4cfNauP7SRhnY+fgYGC/PVBBbFNZsZfyV9sVLFsAFuFY2bRxQR+JmtPp7Q3NBuZGnOmoLhZoAfCCW54m35wA5A==
   dependencies:
     graphql "^15.5.0"
     rimraf "^3.0.2"
     urql "^2.0.1"
 
-"@trycourier/react-provider@^1.20.0":
-  version "1.20.0"
-  resolved "https://registry.yarnpkg.com/@trycourier/react-provider/-/react-provider-1.20.0.tgz#244f4dfdde579d6eae2498697ee04a99ebf86c47"
-  integrity sha512-boLNf0BZL+Vduyg+HYHxnB01pvRaJhKQdL8rogWVAx+zDW7MHjkZEugzBatqCRRk1M94t4vWHopkj/W972gSmg==
+"@trycourier/react-hooks@1.24.1":
+  version "1.24.1"
+  resolved "https://registry.yarnpkg.com/@trycourier/react-hooks/-/react-hooks-1.24.1.tgz#ae84fbaa0b1bd270ba9fa3c00a85065f69bf620d"
+  integrity sha512-nXxuMSonqFA5+Zkq6m7lQfuBOMFmCn45G3Q39uQcLwY5dGDkZ7tdb5whvQFmWTl/BSSEeaS/qUYB8eKV3sQ+LA==
   dependencies:
-    "@trycourier/client-graphql" "^1.20.0"
+    "@trycourier/client-graphql" "^1.24.1"
+    "@trycourier/react-provider" "^1.24.1"
+    deep-extend "^0.6.0"
+    rimraf "^3.0.2"
+
+"@trycourier/react-provider@1.24.1", "@trycourier/react-provider@^1.24.1":
+  version "1.24.1"
+  resolved "https://registry.yarnpkg.com/@trycourier/react-provider/-/react-provider-1.24.1.tgz#b39c9fba00af619a1295160a75cdd42ed7a94b23"
+  integrity sha512-yUbBcdbfjaReOv05p+8r342nVMGXeP7Cpm1GT+cBA3dOX5QkXo4aXuOo3AArGVjbA4KbpwQkaqwy4cXnaHdjFA==
+  dependencies:
+    "@trycourier/client-graphql" "^1.24.1"
     buffer "^6.0.3"
     graphql "^15.5.0"
     react-use "^17.2.1"
