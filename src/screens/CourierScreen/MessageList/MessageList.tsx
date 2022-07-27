@@ -13,10 +13,12 @@ import {
   BottomModalOption,
 } from '../../../components/BottomModal';
 import { useBrand } from '../../../context/CourierReactNativeProvider';
+import type { MarkAllAsReadStatusType } from '../CourierScreen.types';
 
 type PropType = {
   isRead: isReadType;
   setMessagesCount: React.Dispatch<React.SetStateAction<number>>;
+  markAllAsReadStatus?: MarkAllAsReadStatusType;
 };
 
 const styles = StyleSheet.create({
@@ -72,7 +74,11 @@ const styles = StyleSheet.create({
   },
 });
 
-function MessageList({ isRead, setMessagesCount }: PropType) {
+function MessageList({
+  isRead,
+  setMessagesCount,
+  markAllAsReadStatus,
+}: PropType) {
   const {
     renderMessages,
     isLoading,
@@ -98,6 +104,12 @@ function MessageList({ isRead, setMessagesCount }: PropType) {
     fetchData();
     return resetMessages;
   }, []);
+
+  useEffect(() => {
+    if (markAllAsReadStatus === 'Success') {
+      resetMessages();
+    }
+  }, [markAllAsReadStatus]);
 
   const [isBottomModalOpen, setIsBottomModalOpen] = useState(false);
 
@@ -127,6 +139,8 @@ function MessageList({ isRead, setMessagesCount }: PropType) {
     color: textColor,
   };
 
+  useEffect(() => {}, [markAllAsReadStatus]);
+
   if (renderMessages.length === 0 && isLoading) return <FullScreenIndicator />;
 
   if (renderMessages.length === 0 && isLoading === false) {
@@ -137,10 +151,13 @@ function MessageList({ isRead, setMessagesCount }: PropType) {
     );
   }
 
+  const showMessageListLoading = () =>
+    isLoading || markAllAsReadStatus === 'Initiated';
+
   return (
     <>
       <View style={styles.overAll}>
-        {isLoading && (
+        {showMessageListLoading() && (
           <View style={styles.infiniteScrollLoaderContainer}>
             <FullScreenIndicator />
           </View>
@@ -192,5 +209,9 @@ function MessageList({ isRead, setMessagesCount }: PropType) {
     </>
   );
 }
+
+MessageList.defaultProps = {
+  markAllAsReadStatus: undefined,
+};
 
 export default MessageList;

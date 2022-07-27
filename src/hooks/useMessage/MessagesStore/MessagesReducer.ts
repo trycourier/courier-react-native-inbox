@@ -1,6 +1,6 @@
 import {
   SET_MESSAGES,
-  GET_MESSAGES_INIT,
+  MESSAGES_START_LOADING,
   GET_MESSAGES_SUCCESS,
   MESSAGES_STOP_LOADING,
 } from './MessagesActions';
@@ -21,7 +21,7 @@ export const messagesReducer = (
   action: InterfaceMessageReducerActionType
 ) => {
   switch (action.type) {
-    case GET_MESSAGES_INIT:
+    case MESSAGES_START_LOADING:
       return {
         ...state,
         isLoading: true,

@@ -14,7 +14,7 @@ import type {
   TrackingIds,
 } from './MessagesStore/Messagestypes';
 import {
-  getMessagesInitAction,
+  messagesStartLoadingAction,
   getMessagesSuccessAction,
   messageStopLoadingAction,
   setMessagesAction,
@@ -76,7 +76,7 @@ const useMessage = ({ isRead, setMessagesCount }: Props) => {
     });
   });
 
-  const getMessagesInit = () => dispatch(getMessagesInitAction());
+  const getMessagesInit = () => dispatch(messagesStartLoadingAction());
   const getMessageSuccess = ({
     payload,
   }: {
@@ -85,6 +85,7 @@ const useMessage = ({ isRead, setMessagesCount }: Props) => {
   const messagesStopLoading = () => dispatch(messageStopLoadingAction());
 
   const resetMessages = () => {
+    setMessagesCount(0);
     getMessageSuccess({
       payload: { appendMessages: false, messages: [], startCursor: null },
     });

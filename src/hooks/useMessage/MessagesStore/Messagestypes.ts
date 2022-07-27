@@ -1,6 +1,6 @@
 import type { IActionBlock, ITextBlock } from '@trycourier/react-provider';
 import type {
-  GET_MESSAGES_INIT,
+  MESSAGES_START_LOADING,
   GET_MESSAGES_SUCCESS,
   MESSAGES_STOP_LOADING,
   SET_MESSAGES,
@@ -50,7 +50,7 @@ export interface MessagesReducerState extends GetMessagesSuccessResp {
 }
 
 export interface GetMessages {
-  type: typeof GET_MESSAGES_INIT;
+  type: typeof MESSAGES_START_LOADING;
 }
 
 export interface GetMessagesSuccessPayloadType

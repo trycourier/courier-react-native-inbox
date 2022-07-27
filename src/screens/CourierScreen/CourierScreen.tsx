@@ -1,8 +1,9 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
 
+import { Events } from '@trycourier/client-graphql';
 import { FullScreenIndicator, SvgDot } from '../../components';
-import { WHITE } from '../../constants/colors';
+import { BORDER_COLOR, GRAY, WHITE } from '../../constants/colors';
 import {
   BOLD,
   FONT_EXTRA_LARGE,
@@ -16,6 +17,7 @@ import {
   useBrand,
   useReactNativeCourier,
 } from '../../context/CourierReactNativeProvider';
+import type { MarkAllAsReadStatusType } from './CourierScreen.types';
 
 const UNREAD_TAB_NAME = 'Unread';
 const ALL_NOTIFICATIONS_TAB_NAME = 'All notifications';
@@ -36,6 +38,8 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     marginLeft: 40,
     marginTop: 12,
+    justifyContent: 'space-between',
+    paddingRight: 16,
   },
   headerTextStyle: {
     fontSize: FONT_EXTRA_LARGE,
@@ -65,14 +69,45 @@ const styles = StyleSheet.create({
     fontWeight: BOLD,
     textAlign: 'center',
   },
+  markAllAsReadButtonStyle: {
+    borderWidth: 1,
+    borderRadius: 4,
+    paddingVertical: 4,
+    paddingHorizontal: 18,
+    borderColor: BORDER_COLOR,
+  },
+  markAllAsReadTextStyle: {
+    color: GRAY,
+  },
 });
 
 function CourierScreen() {
+  const { courierClient } = useReactNativeCourier();
   const { linearGradient } = useReactNativeCourier();
   const [messagesCount, setMessagesCount] = useState(0);
+  const [markAllAsReadStatus, setMarkAllAsReadStatus] =
+    useState<MarkAllAsReadStatusType>('Stale');
+
   const [activeTab, setActiveTab] = useState<
     typeof UNREAD_TAB_NAME | typeof ALL_NOTIFICATIONS_TAB_NAME
   >('Unread');
+
+  const { trackEventBatch } = Events({ client: courierClient });
+  const markAllAsRead = () => {
+    setMarkAllAsReadStatus('Initiated');
+    trackEventBatch('read')
+      .then(() => {
+        setMarkAllAsReadStatus('Success');
+      })
+      .catch((err) => {
+        setMarkAllAsReadStatus('Error');
+        console.log('err', { err });
+      })
+      .finally(() => {
+        setMarkAllAsReadStatus('Stale');
+      });
+  };
+
   const setUnreadActive = () => {
     setMessagesCount(0);
     setActiveTab('Unread');
@@ -81,7 +116,6 @@ function CourierScreen() {
     setMessagesCount(0);
     setActiveTab('All notifications');
   };
-
   const {
     isBrandLoading,
     borderRadius,
@@ -90,6 +124,7 @@ function CourierScreen() {
     isBrandLoadingError,
   } = useBrand();
   const normalizedBorderRadius = Number(borderRadius.replace('px', ''));
+  const showMarkAllAsRead = () => activeTab === 'Unread' && messagesCount > 0;
 
   const headerContainerStyle = {
     ...styles.headerContainer,
@@ -115,8 +150,22 @@ function CourierScreen() {
         <View style={styles.messagesContainer}>
           <View style={headerContainerStyle}>
             <View style={styles.headerStyle}>
-              <Text style={styles.headerTextStyle}>Inbox</Text>
-              <SvgDot color={primary} size={26} value={messagesCount} />
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={styles.headerTextStyle}>Inbox</Text>
+                <SvgDot color={primary} size={26} value={messagesCount} />
+              </View>
+              <View>
+                {showMarkAllAsRead() && (
+                  <TouchableOpacity
+                    onPress={markAllAsRead}
+                    style={styles.markAllAsReadButtonStyle}
+                  >
+                    <Text style={styles.markAllAsReadTextStyle}>
+                      Mark All as read
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </View>
             </View>
             <Tabs>
               <Tab
@@ -136,7 +185,11 @@ function CourierScreen() {
               <MessageList isRead="all" setMessagesCount={setMessagesCount} />
             )}
             {activeTab === 'Unread' && (
-              <MessageList isRead={false} setMessagesCount={setMessagesCount} />
+              <MessageList
+                isRead={false}
+                setMessagesCount={setMessagesCount}
+                markAllAsReadStatus={markAllAsReadStatus}
+              />
             )}
           </View>
         </View>

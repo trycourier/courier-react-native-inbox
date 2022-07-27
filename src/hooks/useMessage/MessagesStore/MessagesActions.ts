@@ -3,14 +3,17 @@ import type {
   MessageType,
 } from './Messagestypes';
 
-export const GET_MESSAGES_INIT: 'GET_MESSAGES_INIT' = 'GET_MESSAGES_INIT';
+export const MESSAGES_START_LOADING: 'MESSAGES_START_LOADING' =
+  'MESSAGES_START_LOADING';
 export const GET_MESSAGES_SUCCESS: 'GET_MESSAGES_SUCCESS' =
   'GET_MESSAGES_SUCCESS';
 export const MESSAGES_STOP_LOADING: 'MESSAGES_STOP_LOADING' =
   'MESSAGES_STOP_LOADING';
 export const SET_MESSAGES: 'SET_MESSAGES' = 'SET_MESSAGES';
 
-export const getMessagesInitAction = () => ({ type: GET_MESSAGES_INIT });
+export const messagesStartLoadingAction = () => ({
+  type: MESSAGES_START_LOADING,
+});
 export const getMessagesSuccessAction = ({
   payload,
 }: {
