@@ -6,7 +6,7 @@ import type {
   MessageType,
 } from '../../../hooks/useMessage/MessagesStore/Messagestypes';
 import { FullScreenIndicator, Message } from '../../../components';
-import { BOLD } from '../../../constants/fontSize';
+import { BOLD, FONT_EXTRA_SMALL } from '../../../constants/fontSize';
 import { DIVIDER_COLOR, GRAY, LIGHT_GRAY } from '../../../constants/colors';
 import {
   BottomModal,
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
   },
   additionalActionTextStyle: {
     color: GRAY,
-    fontSize: 10,
+    fontSize: FONT_EXTRA_SMALL,
   },
   bottomModalOptionContainer: {
     width: '100%',

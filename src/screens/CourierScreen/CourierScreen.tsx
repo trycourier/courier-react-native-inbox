@@ -3,7 +3,12 @@ import React, { useState } from 'react';
 
 import { FullScreenIndicator, SvgDot } from '../../components';
 import { WHITE } from '../../constants/colors';
-import { BOLD, SEMI_BOLD } from '../../constants/fontSize';
+import {
+  BOLD,
+  FONT_EXTRA_LARGE,
+  FONT_LARGE,
+  SEMI_BOLD,
+} from '../../constants/fontSize';
 import { Tab, Tabs } from '../../components/Tabs';
 import MessageList from './MessageList/MessageList';
 import { Footer } from '../../components/Footer';
@@ -33,7 +38,7 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   headerTextStyle: {
-    fontSize: 24,
+    fontSize: FONT_EXTRA_LARGE,
     fontWeight: SEMI_BOLD,
     marginRight: 8,
   },
@@ -56,7 +61,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   brandLoadingFailTextStyle: {
-    fontSize: 16,
+    fontSize: FONT_LARGE,
     fontWeight: BOLD,
     textAlign: 'center',
   },

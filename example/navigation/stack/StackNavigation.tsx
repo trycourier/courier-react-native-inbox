@@ -12,7 +12,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function StackNavigation() {
   return (
-    <Stack.Navigator initialRouteName="Preference">
+    <Stack.Navigator initialRouteName="Courier">
       <Stack.Screen
         name="Preference"
         component={PreferenceScreen}

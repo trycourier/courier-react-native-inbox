@@ -2,7 +2,7 @@ import { Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import type { ViewStyle, TextStyle } from 'react-native';
 import React from 'react';
 import tick from '../../assets/tick.png';
-import { SEMI_BOLD } from '../../constants/fontSize';
+import { FONT_SMALL, SEMI_BOLD } from '../../constants/fontSize';
 import {
   WHITE,
   PREFERENCE_CHIP_BORDER_COLOR,
@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   textStyle: {
-    fontSize: 12,
+    fontSize: FONT_SMALL,
     color: PREFERENCE_CHIP_BORDER_COLOR,
     fontWeight: SEMI_BOLD,
     paddingVertical: 1,

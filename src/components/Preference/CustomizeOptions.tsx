@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
 import { CUSTOMIZATION_OPTIONS_BACKGROUND_COLOR } from '../../constants/colors';
 import { Checkbox } from '../Checkbox';
-import { SEMI_BOLD } from '../../constants/fontSize';
+import { FONT_SMALL, SEMI_BOLD } from '../../constants/fontSize';
 import { Chip } from '../Chip';
 import type { SelectedOptionType, UpdateSelectedOptionsType } from './types';
 
@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
   },
   customizeHeaderTextStyle: {
     fontWeight: SEMI_BOLD,
-    fontSize: 12,
+    fontSize: FONT_SMALL,
   },
   optionsContainer: {
     marginLeft: 28,

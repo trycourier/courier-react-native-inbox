@@ -8,7 +8,7 @@ import {
   PREFERENCE_PRIMARY_STYLE,
   WHITE,
 } from '../../constants/colors';
-import { SEMI_BOLD } from '../../constants/fontSize';
+import { FONT_MEDIUM, FONT_SMALL, SEMI_BOLD } from '../../constants/fontSize';
 import CustomizeOptions from './CustomizeOptions';
 import type { PreferencesStatusType } from '../../context/Brands/brands.types';
 import type { SelectedOptionType, UpdateSelectedOptionsType } from './types';
@@ -25,11 +25,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   titleStyle: {
-    fontSize: 14,
+    fontSize: FONT_MEDIUM,
     fontWeight: SEMI_BOLD,
   },
   subTitleStyle: {
-    fontSize: 12,
+    fontSize: FONT_SMALL,
     lineHeight: 16,
     maxWidth: 260,
     color: GRAY,

@@ -2,7 +2,12 @@ import { Text, Image, StyleSheet, ScrollView, View } from 'react-native';
 import React, { useEffect, useMemo } from 'react';
 import { usePreferences } from '@trycourier/react-hooks';
 import oyster from '../../assets/oyster.png';
-import { BOLD, SEMI_BOLD } from '../../constants/fontSize';
+import {
+  BOLD,
+  FONT_EXTRA_EXTRA_LARGE,
+  FONT_SMALL,
+  SEMI_BOLD,
+} from '../../constants/fontSize';
 import { GRAY, WHITE } from '../../constants/colors';
 import Preference from '../../components/Preference/Preference';
 import { useBrand } from '../../context/CourierReactNativeProvider';
@@ -25,7 +30,7 @@ const styles = StyleSheet.create({
   },
   headerTextStyle: {
     marginVertical: 14,
-    fontSize: 32,
+    fontSize: FONT_EXTRA_EXTRA_LARGE,
     marginRight: 77,
     lineHeight: 44,
     fontWeight: BOLD,
@@ -35,7 +40,7 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     marginBottom: 14,
     color: GRAY,
-    fontSize: 12,
+    fontSize: FONT_SMALL,
   },
   preferenceSavedTimeStyle: {
     fontWeight: SEMI_BOLD,

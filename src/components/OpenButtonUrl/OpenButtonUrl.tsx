@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { useBrand } from '../../context/CourierReactNativeProvider';
 import { WHITE } from '../../constants/colors';
+import { FONT_SMALL } from '../../constants/fontSize';
 
 const styles = StyleSheet.create({
   buttonStyle: {
@@ -21,7 +22,7 @@ const styles = StyleSheet.create({
   },
   buttonTextStyle: {
     color: WHITE,
-    fontSize: 12,
+    fontSize: FONT_SMALL,
     textAlign: 'center',
   },
 });

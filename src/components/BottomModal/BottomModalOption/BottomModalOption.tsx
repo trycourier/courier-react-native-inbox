@@ -1,11 +1,12 @@
 import { Text, StyleSheet, TouchableOpacity } from 'react-native';
 import React from 'react';
 import { STORM_BLUE } from '../../../constants/colors';
+import { FONT_MEDIUM } from '../../../constants/fontSize';
 
 const styles = StyleSheet.create({
   markReadStyle: {
     color: STORM_BLUE,
-    fontSize: 14,
+    fontSize: FONT_MEDIUM,
     paddingTop: 14,
     paddingBottom: 23,
   },

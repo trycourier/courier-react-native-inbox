@@ -4,7 +4,11 @@ import formatDistanceToNowStrict from 'date-fns/formatDistanceToNowStrict';
 import type { MessageType } from 'src/hooks/useMessage/MessagesStore/Messagestypes';
 import type { IActionBlock, ITextBlock } from '@trycourier/react-provider';
 import { SvgDot } from '../SvgDot';
-import { SEMI_BOLD } from '../../constants/fontSize';
+import {
+  FONT_EXTRA_SMALL,
+  FONT_SMALL,
+  SEMI_BOLD,
+} from '../../constants/fontSize';
 import { GRAY } from '../../constants/colors';
 import { BurgerIcon } from '../BurgerIcon';
 import { useBrand } from '../../context/CourierReactNativeProvider';
@@ -31,7 +35,7 @@ const styles = StyleSheet.create({
     fontWeight: SEMI_BOLD,
   },
   subHeaderStyle: {
-    fontSize: 12,
+    fontSize: FONT_SMALL,
     color: GRAY,
   },
   dotStyle: {
@@ -44,7 +48,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   fromNowText: {
-    fontSize: 10,
+    fontSize: FONT_EXTRA_SMALL,
     color: GRAY,
   },
   actionButtonContainerStyle: {
