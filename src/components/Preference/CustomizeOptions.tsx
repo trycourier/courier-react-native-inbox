@@ -1,8 +1,8 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { CUSTOMIZATION_OPTIONS_BACKGROUND_COLOR } from '../../constants/colors';
-import { Checkbox } from '../Checkbox';
 import { FONT_SMALL, SEMI_BOLD } from '../../constants/fontSize';
+import { Checkbox } from '../Checkbox';
 import { Chip } from '../Chip';
 import type { SelectedOptionType, UpdateSelectedOptionsType } from './types';
 

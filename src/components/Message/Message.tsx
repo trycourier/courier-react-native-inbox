@@ -9,14 +9,14 @@ import {
   FONT_SMALL,
   SEMI_BOLD,
 } from '../../constants/fontSize';
-import { GRAY } from '../../constants/colors';
+import { GRAY, LIGHT_GRAY } from '../../constants/colors';
 import { BurgerIcon } from '../BurgerIcon';
 import { useBrand } from '../../context/CourierReactNativeProvider';
 import { OpenButtonUrl } from '../OpenButtonUrl';
 
 const styles = StyleSheet.create({
   overAll: {
-    backgroundColor: '#F9FAFB',
+    backgroundColor: LIGHT_GRAY,
     borderRadius: 4,
     marginBottom: 6,
     paddingVertical: 16,

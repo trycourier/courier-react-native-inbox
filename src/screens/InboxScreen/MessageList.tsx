@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TextStyle, FlatList } from 'react-native';
+import { FlatList, StyleSheet, Text, TextStyle, View } from 'react-native';
+import { FullScreenIndicator, Message } from '../../components';
+import { BottomModal, BottomModalOption } from '../../components/BottomModal';
+import { DIVIDER_COLOR, GRAY, LIGHT_GRAY } from '../../constants/colors';
+import { BOLD, FONT_EXTRA_SMALL } from '../../constants/fontSize';
+import { useBrand } from '../../context/CourierReactNativeProvider';
 import { useMessage } from '../../hooks/useMessage';
 import type {
   isReadType,
   MessageType,
 } from '../../hooks/useMessage/MessagesStore/Messagestypes';
-import { FullScreenIndicator, Message } from '../../components';
-import { BOLD, FONT_EXTRA_SMALL } from '../../constants/fontSize';
-import { DIVIDER_COLOR, GRAY, LIGHT_GRAY } from '../../constants/colors';
-import { BottomModal, BottomModalOption } from '../../components/BottomModal';
-import { useBrand } from '../../context/CourierReactNativeProvider';
 import type { MarkAllAsReadStatusType } from '../CourierScreen/CourierScreen.types';
 
 type PropType = {

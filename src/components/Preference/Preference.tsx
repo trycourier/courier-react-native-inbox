@@ -1,23 +1,25 @@
-import { View, Text, StyleSheet, Switch } from 'react-native';
 import React, { useState } from 'react';
+import { StyleSheet, Switch, Text, View } from 'react-native';
 import {
   DIVIDER_COLOR,
   GRAY,
-  PREFERENCE_SWITCH_ACTIVE_COLOR,
+  LIGHT_GRAY,
   PREFERENCE_SWITCH_INACTIVE_COLOR,
-  PREFERENCE_PRIMARY_STYLE,
   WHITE,
 } from '../../constants/colors';
 import { FONT_MEDIUM, FONT_SMALL, SEMI_BOLD } from '../../constants/fontSize';
-import CustomizeOptions from './CustomizeOptions';
 import type { PreferencesStatusType } from '../../context/Brands/brands.types';
+import { useBrand } from '../../context/CourierReactNativeProvider';
+import CustomizeOptions from './CustomizeOptions';
 import type { SelectedOptionType, UpdateSelectedOptionsType } from './types';
 
 const styles = StyleSheet.create({
   overAll: {
     borderColor: DIVIDER_COLOR,
     borderTopWidth: 1,
-    paddingVertical: 26,
+    backgroundColor: LIGHT_GRAY,
+    padding: 12,
+    borderRadius: 4,
   },
   container: {
     flexDirection: 'row',
@@ -64,6 +66,15 @@ const getUpdatedArray = ({
     ...currentSelectedOptions.slice(idx + 1),
   ];
 };
+const preferenceSwitchInactiveColorConverter = (color: string) => {
+  const trackColorOpacity = 0.35;
+  const rgbaReplace = color.replace('rgb', 'rgba');
+  const opacityAddedValue = `${rgbaReplace.slice(
+    0,
+    rgbaReplace.length - 1
+  )},${trackColorOpacity})`;
+  return opacityAddedValue;
+};
 
 function Preference({ title, subtitle, optionsTitle, status }: Props) {
   const isEnabled = status === 'OPTED_IN' || status === 'REQUIRED';
@@ -71,6 +82,9 @@ function Preference({ title, subtitle, optionsTitle, status }: Props) {
     'Email',
     'Push',
   ]);
+  const {
+    colors: { primary },
+  } = useBrand();
 
   const updateSelectedOptions: UpdateSelectedOptionsType = (
     option: SelectedOptionType
@@ -97,10 +111,10 @@ function Preference({ title, subtitle, optionsTitle, status }: Props) {
           disabled={status === 'REQUIRED'}
           value={isEnabled}
           trackColor={{
-            true: PREFERENCE_SWITCH_ACTIVE_COLOR,
+            true: preferenceSwitchInactiveColorConverter(primary),
             false: PREFERENCE_SWITCH_INACTIVE_COLOR,
           }}
-          thumbColor={isEnabled ? PREFERENCE_PRIMARY_STYLE : WHITE}
+          thumbColor={isEnabled ? primary : WHITE}
         />
       </View>
       {isEnabled && (

@@ -1,22 +1,27 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { Events } from '@trycourier/client-graphql';
+import type { TextStyle } from 'react-native';
 import { FullScreenIndicator, SvgDot } from '../../components';
+import { Footer } from '../../components/Footer';
 import { BORDER_COLOR, GRAY, WHITE } from '../../constants/colors';
 import {
   BOLD,
   FONT_EXTRA_LARGE,
   FONT_LARGE,
+  FONT_SMALL,
   SEMI_BOLD,
 } from '../../constants/fontSize';
-import { Footer } from '../../components/Footer';
 import {
   useBrand,
   useReactNativeCourier,
 } from '../../context/CourierReactNativeProvider';
-import type { MarkAllAsReadStatusType } from './CourierScreen.types';
 import InboxScreen from '../InboxScreen/InboxScreen';
+import { PreferenceScreen } from '../PreferenceScreen';
+import type { MarkAllAsReadStatusType } from './CourierScreen.types';
+
+import prefLogo from '../../assets/preferences.png';
 
 export type ReadUnReadTabTYpe = 'Unread' | 'All notifications';
 
@@ -72,11 +77,10 @@ const styles = StyleSheet.create({
     borderColor: BORDER_COLOR,
   },
   preferenceIconStyle: {
-    borderWidth: 1,
-    borderRadius: 4,
-    paddingVertical: 4,
-    paddingHorizontal: 4,
-    borderColor: BORDER_COLOR,
+    height: 28,
+    width: 28,
+  },
+  preferenceIconContainer: {
     marginLeft: 12,
   },
   markAllAsReadTextStyle: {
@@ -87,7 +91,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  backToInboxStyle: {
+    fontSize: FONT_SMALL,
+  },
 });
+
+type ScreenType = 'Inbox' | 'Preferences';
 
 function CourierScreen() {
   const { courierClient } = useReactNativeCourier();
@@ -95,6 +104,11 @@ function CourierScreen() {
   const [messagesCount, setMessagesCount] = useState(0);
   const [markAllAsReadStatus, setMarkAllAsReadStatus] =
     useState<MarkAllAsReadStatusType>('Stale');
+  const [currentScreen, setCurrentScreen] = useState<ScreenType>('Inbox');
+  const toggleCurrentScreen = () => {
+    setMessagesCount(0);
+    setCurrentScreen((prev) => (prev === 'Inbox' ? 'Preferences' : 'Inbox'));
+  };
 
   const [activeTab, setActiveTab] = useState<ReadUnReadTabTYpe>('Unread');
 
@@ -130,7 +144,8 @@ function CourierScreen() {
     isBrandLoadingError,
   } = useBrand();
   const normalizedBorderRadius = Number(borderRadius.replace('px', ''));
-  const showMarkAllAsRead = () => activeTab === 'Unread' && messagesCount > 0;
+  const showMarkAllAsRead = () =>
+    activeTab === 'Unread' && messagesCount > 0 && currentScreen === 'Inbox';
 
   const headerContainerStyle = {
     ...styles.headerContainer,
@@ -150,16 +165,33 @@ function CourierScreen() {
       </View>
     );
 
+  const backToInboxStyle: TextStyle[] = [
+    styles.backToInboxStyle,
+    { color: primary },
+  ];
+
   return (
     <LinearGradient colors={[topColor, bottomColor]} style={styles.container}>
       <View style={styles.overAll}>
         <View style={styles.messagesContainer}>
           <View style={headerContainerStyle}>
             <View style={styles.headerStyle}>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Text style={styles.headerTextStyle}>Inbox</Text>
-                <SvgDot color={primary} size={26} value={messagesCount} />
-              </View>
+              {currentScreen === 'Inbox' && (
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Text style={styles.headerTextStyle}>Inbox</Text>
+                  <SvgDot color={primary} size={26} value={messagesCount} />
+                </View>
+              )}
+
+              {currentScreen === 'Preferences' && (
+                <View>
+                  <Text style={styles.headerTextStyle}>Preferences</Text>
+                  <TouchableOpacity onPress={toggleCurrentScreen}>
+                    <Text style={backToInboxStyle}>Back to Inbox</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+
               <View style={styles.preferencesAndMarkAllAsReadContainer}>
                 {showMarkAllAsRead() && (
                   <TouchableOpacity
@@ -171,19 +203,25 @@ function CourierScreen() {
                     </Text>
                   </TouchableOpacity>
                 )}
-                <TouchableOpacity style={styles.preferenceIconStyle}>
-                  <Text>Pref</Text>
+                <TouchableOpacity
+                  style={styles.preferenceIconContainer}
+                  onPress={toggleCurrentScreen}
+                >
+                  <Image source={prefLogo} style={styles.preferenceIconStyle} />
                 </TouchableOpacity>
               </View>
             </View>
           </View>
-          <InboxScreen
-            activeTab={activeTab}
-            setUnreadActive={setUnreadActive}
-            setAllNotificationsActive={setAllNotificationsActive}
-            setMessagesCount={setMessagesCount}
-            markAllAsReadStatus={markAllAsReadStatus}
-          />
+          {currentScreen === 'Inbox' && (
+            <InboxScreen
+              activeTab={activeTab}
+              setUnreadActive={setUnreadActive}
+              setAllNotificationsActive={setAllNotificationsActive}
+              setMessagesCount={setMessagesCount}
+              markAllAsReadStatus={markAllAsReadStatus}
+            />
+          )}
+          {currentScreen === 'Preferences' && <PreferenceScreen />}
         </View>
         <Footer />
       </View>

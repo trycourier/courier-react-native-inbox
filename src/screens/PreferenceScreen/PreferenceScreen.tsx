@@ -1,50 +1,26 @@
-import { Text, Image, StyleSheet, ScrollView, View } from 'react-native';
+import { StyleSheet, View, FlatList } from 'react-native';
 import React, { useEffect, useMemo } from 'react';
 import { usePreferences } from '@trycourier/react-hooks';
-import oyster from '../../assets/oyster.png';
-import {
-  BOLD,
-  FONT_EXTRA_EXTRA_LARGE,
-  FONT_SMALL,
-  SEMI_BOLD,
-} from '../../constants/fontSize';
-import { GRAY, WHITE } from '../../constants/colors';
 import Preference from '../../components/Preference/Preference';
 import { useBrand } from '../../context/CourierReactNativeProvider';
 
-const OYSTER_IMAGE_SIZE = 54;
+const normalizeSelectedOption = (str: String) => {
+  return str
+    .split('_')
+    .map((subStr) => {
+      if (subStr.length === 1) return subStr.toUpperCase();
+      return subStr[0].toUpperCase() + subStr.slice(1).toLowerCase();
+    })
+    .join(' ');
+};
 
 const styles = StyleSheet.create({
-  scrollViewStyle: {
-    backgroundColor: WHITE,
-  },
   overAll: {
-    paddingTop: 40,
-    paddingHorizontal: 20,
-    backgroundColor: WHITE,
-    paddingBottom: 37,
+    flex: 1,
+    marginTop: 4,
   },
-  oysterImageSize: {
-    height: OYSTER_IMAGE_SIZE,
-    width: OYSTER_IMAGE_SIZE,
-  },
-  headerTextStyle: {
-    marginVertical: 14,
-    fontSize: FONT_EXTRA_EXTRA_LARGE,
-    marginRight: 77,
-    lineHeight: 44,
-    fontWeight: BOLD,
-  },
-  subHeaderStyles: {
-    marginRight: 77,
-    lineHeight: 16,
-    marginBottom: 14,
-    color: GRAY,
-    fontSize: FONT_SMALL,
-  },
-  preferenceSavedTimeStyle: {
-    fontWeight: SEMI_BOLD,
-    marginBottom: 23,
+  preferenceContainer: {
+    marginBottom: 4,
   },
 });
 
@@ -70,33 +46,26 @@ function PreferenceScreen() {
 
   const showPreferences = () => filteredPreferencesTemplates.length > 0;
 
+  if (showPreferences() === false) return null;
   return (
-    <ScrollView
-      showsVerticalScrollIndicator={false}
-      style={styles.scrollViewStyle}
-    >
-      <View style={styles.overAll}>
-        <Image source={oyster} style={styles.oysterImageSize} />
-        <Text style={styles.headerTextStyle}>Notification Preferences</Text>
-        <Text style={styles.subHeaderStyles}>
-          For the categories listed below, you can choose how you’d like Oyster
-          to reach you.
-        </Text>
-        <Text style={[styles.subHeaderStyles, styles.preferenceSavedTimeStyle]}>
-          Preferences last saved on Jun 15 at 3:45pm
-        </Text>
-        {showPreferences() &&
-          filteredPreferencesTemplates.map((template) => (
+    <View style={styles.overAll}>
+      <FlatList
+        data={filteredPreferencesTemplates}
+        renderItem={({ item: template }) => (
+          <View style={styles.preferenceContainer}>
             <Preference
-              key={template.templateId}
               title={template.templateName}
               status={template.defaultStatus}
-              subtitle="Be notified if you are invited to a group or event."
+              subtitle={normalizeSelectedOption(template.defaultStatus)}
               optionsTitle="Customize Delivery Channels"
             />
-          ))}
-      </View>
-    </ScrollView>
+          </View>
+        )}
+        keyExtractor={({ templateId }) => templateId}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
+      />
+    </View>
   );
 }
 

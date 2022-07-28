@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Tab, Tabs } from '../../components/Tabs';
-import MessageList from './MessageList';
-import type { MarkAllAsReadStatusType } from '../CourierScreen/CourierScreen.types';
 import type { ReadUnReadTabTYpe } from '../CourierScreen/CourierScreen';
+import type { MarkAllAsReadStatusType } from '../CourierScreen/CourierScreen.types';
+import MessageList from './MessageList';
 
 const styles = StyleSheet.create({
   overAll: {
