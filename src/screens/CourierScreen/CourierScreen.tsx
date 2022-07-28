@@ -10,17 +10,15 @@ import {
   FONT_LARGE,
   SEMI_BOLD,
 } from '../../constants/fontSize';
-import { Tab, Tabs } from '../../components/Tabs';
-import MessageList from './MessageList/MessageList';
 import { Footer } from '../../components/Footer';
 import {
   useBrand,
   useReactNativeCourier,
 } from '../../context/CourierReactNativeProvider';
 import type { MarkAllAsReadStatusType } from './CourierScreen.types';
+import InboxScreen from '../InboxScreen/InboxScreen';
 
-const UNREAD_TAB_NAME = 'Unread';
-const ALL_NOTIFICATIONS_TAB_NAME = 'All notifications';
+export type ReadUnReadTabTYpe = 'Unread' | 'All notifications';
 
 const styles = StyleSheet.create({
   container: {
@@ -30,7 +28,6 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     backgroundColor: WHITE,
-    marginBottom: 4,
   },
   headerStyle: {
     flexDirection: 'row',
@@ -55,9 +52,7 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingBottom: 0,
   },
-  flatListContainerStyle: {
-    flex: 1,
-  },
+
   brandLoadingFailedStyle: {
     flex: 1,
     alignItems: 'center',
@@ -76,8 +71,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     borderColor: BORDER_COLOR,
   },
+  preferenceIconStyle: {
+    borderWidth: 1,
+    borderRadius: 4,
+    paddingVertical: 4,
+    paddingHorizontal: 4,
+    borderColor: BORDER_COLOR,
+    marginLeft: 12,
+  },
   markAllAsReadTextStyle: {
     color: GRAY,
+  },
+
+  preferencesAndMarkAllAsReadContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });
 
@@ -88,9 +96,7 @@ function CourierScreen() {
   const [markAllAsReadStatus, setMarkAllAsReadStatus] =
     useState<MarkAllAsReadStatusType>('Stale');
 
-  const [activeTab, setActiveTab] = useState<
-    typeof UNREAD_TAB_NAME | typeof ALL_NOTIFICATIONS_TAB_NAME
-  >('Unread');
+  const [activeTab, setActiveTab] = useState<ReadUnReadTabTYpe>('Unread');
 
   const { trackEventBatch } = Events({ client: courierClient });
   const markAllAsRead = () => {
@@ -154,7 +160,7 @@ function CourierScreen() {
                 <Text style={styles.headerTextStyle}>Inbox</Text>
                 <SvgDot color={primary} size={26} value={messagesCount} />
               </View>
-              <View>
+              <View style={styles.preferencesAndMarkAllAsReadContainer}>
                 {showMarkAllAsRead() && (
                   <TouchableOpacity
                     onPress={markAllAsRead}
@@ -165,33 +171,19 @@ function CourierScreen() {
                     </Text>
                   </TouchableOpacity>
                 )}
+                <TouchableOpacity style={styles.preferenceIconStyle}>
+                  <Text>Pref</Text>
+                </TouchableOpacity>
               </View>
             </View>
-            <Tabs>
-              <Tab
-                title="Unread"
-                isActive={activeTab === 'Unread'}
-                onPress={setUnreadActive}
-              />
-              <Tab
-                title="All notifications"
-                isActive={activeTab === 'All notifications'}
-                onPress={setAllNotificationsActive}
-              />
-            </Tabs>
           </View>
-          <View style={styles.flatListContainerStyle}>
-            {activeTab === 'All notifications' && (
-              <MessageList isRead="all" setMessagesCount={setMessagesCount} />
-            )}
-            {activeTab === 'Unread' && (
-              <MessageList
-                isRead={false}
-                setMessagesCount={setMessagesCount}
-                markAllAsReadStatus={markAllAsReadStatus}
-              />
-            )}
-          </View>
+          <InboxScreen
+            activeTab={activeTab}
+            setUnreadActive={setUnreadActive}
+            setAllNotificationsActive={setAllNotificationsActive}
+            setMessagesCount={setMessagesCount}
+            markAllAsReadStatus={markAllAsReadStatus}
+          />
         </View>
         <Footer />
       </View>
