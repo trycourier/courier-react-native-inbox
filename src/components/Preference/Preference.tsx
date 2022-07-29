@@ -15,11 +15,8 @@ import type {
   PreferencesTemplateType,
   PreferencesStatusType,
 } from '../../context/Brands/brands.types';
-import type {
-  RecipientPreferenceType,
-  SelectedOptionType,
-  UpdateSelectedOptionsType,
-} from './types';
+import type { RecipientPreferenceType } from './types';
+import { rgbToRgbaConverter, capitalize } from '../../utils/helper';
 
 const styles = StyleSheet.create({
   overAll: {
@@ -57,40 +54,6 @@ type Props = {
   stopPreferenceLoading: () => void;
 };
 
-const allOptions: SelectedOptionType[] = ['Email', 'Push'];
-
-const getUpdatedArray = ({
-  option,
-  currentSelectedOptions,
-}: {
-  option: SelectedOptionType;
-  currentSelectedOptions: SelectedOptionType[];
-}): SelectedOptionType[] => {
-  const idx = currentSelectedOptions.findIndex(
-    (selectedOption) => selectedOption === option
-  );
-  if (idx === -1) return [...currentSelectedOptions, option];
-  return [
-    ...currentSelectedOptions.slice(0, idx),
-    ...currentSelectedOptions.slice(idx + 1),
-  ];
-};
-
-const rgbToRgbaConverter = ({
-  rgb,
-  opacity = 1,
-}: {
-  rgb: string;
-  opacity?: number;
-}) => {
-  const rgbaReplace = rgb.replace('rgb', 'rgba');
-  const opacityAddedValue = `${rgbaReplace.slice(
-    0,
-    rgbaReplace.length - 1
-  )},${opacity})`;
-  return opacityAddedValue;
-};
-
 const preferenceSwitchInactiveColorConverter = (
   color: string,
   status: PreferencesStatusType
@@ -107,10 +70,7 @@ const getThumbColor = (color: string, status: PreferencesStatusType) => {
 const normalizeSelectedOption = (str: String) => {
   return str
     .split('_')
-    .map((subStr) => {
-      if (subStr.length === 1) return subStr.toUpperCase();
-      return subStr[0].toUpperCase() + subStr.slice(1).toLowerCase();
-    })
+    .map((subStr) => capitalize(subStr))
     .join(' ');
 };
 
@@ -127,25 +87,11 @@ function Preference({
     status === 'OPTED_IN' || status === 'REQUIRED'
   );
 
-  const [selectedOptions, setSelectedOptions] = useState<SelectedOptionType[]>([
-    'Email',
-    'Push',
-  ]);
   const {
     colors: { primary },
   } = useBrand();
 
   const { updateRecipientPreferences } = usePreferences();
-
-  const updateSelectedOptions: UpdateSelectedOptionsType = (
-    option: SelectedOptionType
-  ) => {
-    const updatedArray = getUpdatedArray({
-      option,
-      currentSelectedOptions: selectedOptions,
-    });
-    setSelectedOptions([...updatedArray]);
-  };
 
   const handleOnPreferenceChange = (
     newPreferences: RecipientPreferenceType
@@ -167,10 +113,6 @@ function Preference({
         setIsEnabled((prev) => !prev);
       })
       .finally(stopPreferenceLoading);
-  };
-
-  const resetSelectedOptions = () => {
-    setSelectedOptions(allOptions);
   };
 
   return (
@@ -198,10 +140,8 @@ function Preference({
         <View style={styles.customizationOptionContainerStyles}>
           <CustomizeOptions
             title={optionsTitle}
-            options={allOptions}
-            selectedOptions={selectedOptions}
-            updateSelectedOptions={updateSelectedOptions}
-            resetSelectedOptions={resetSelectedOptions}
+            recipientPreference={recipientPreference}
+            handlePreferenceChange={handleOnPreferenceChange}
           />
         </View>
       )}

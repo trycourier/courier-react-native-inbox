@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { CUSTOMIZATION_OPTIONS_BACKGROUND_COLOR } from '../../constants/colors';
 import { FONT_SMALL, SEMI_BOLD } from '../../constants/fontSize';
 import { Checkbox } from '../Checkbox';
 import { Chip } from '../Chip';
-import type { SelectedOptionType, UpdateSelectedOptionsType } from './types';
+import { capitalize } from '../../utils/helper';
+import type {
+  SelectedOptionType,
+  UpdateSelectedOptionsType,
+  RecipientPreferenceType,
+} from './types';
 
 const styles = StyleSheet.create({
   container: {
@@ -34,27 +39,61 @@ const styles = StyleSheet.create({
   },
 });
 
+const allOptions: SelectedOptionType[] = ['email', 'push'];
+
+const getUpdatedArray = ({
+  option,
+  currentSelectedOptions,
+}: {
+  option: SelectedOptionType;
+  currentSelectedOptions: SelectedOptionType[];
+}): SelectedOptionType[] => {
+  const idx = currentSelectedOptions.findIndex(
+    (selectedOption) => selectedOption === option
+  );
+  if (idx === -1) return [...currentSelectedOptions, option];
+  return [
+    ...currentSelectedOptions.slice(0, idx),
+    ...currentSelectedOptions.slice(idx + 1),
+  ];
+};
+
 type PropType = {
   title: string;
-  options: SelectedOptionType[];
-  selectedOptions: SelectedOptionType[];
-  updateSelectedOptions: UpdateSelectedOptionsType;
-  resetSelectedOptions: () => void;
+  recipientPreference: RecipientPreferenceType;
+  handlePreferenceChange: (
+    _newPreferences: RecipientPreferenceType
+  ) => Promise<any>;
 };
 
 function CustomizeOptions({
   title,
-  options,
-  selectedOptions,
-  updateSelectedOptions,
-  resetSelectedOptions,
+  recipientPreference,
+  handlePreferenceChange,
 }: PropType) {
-  const [isSelected, setIsSelected] = useState(false);
+  const isSelected = recipientPreference.hasCustomRouting;
+  const selectedOptions = recipientPreference.routingPreferences;
+
+  const updateSelectedOptions: UpdateSelectedOptionsType = (
+    option: SelectedOptionType
+  ) => {
+    const updatedArray = getUpdatedArray({
+      option,
+      currentSelectedOptions: selectedOptions,
+    });
+    handlePreferenceChange({
+      ...recipientPreference,
+      routingPreferences: updatedArray,
+    });
+  };
+
   const toggleSelected = () => {
-    setIsSelected((prev) => !prev);
-    if (!isSelected) {
-      resetSelectedOptions();
-    }
+    const checked = recipientPreference.hasCustomRouting;
+    handlePreferenceChange({
+      ...recipientPreference,
+      hasCustomRouting: !checked,
+      routingPreferences: !checked ? ['email', 'push'] : [],
+    });
   };
   return (
     <View style={styles.container}>
@@ -71,10 +110,10 @@ function CustomizeOptions({
       </TouchableOpacity>
       {isSelected && (
         <View style={styles.optionsContainer}>
-          {options.map((option) => (
+          {allOptions.map((option) => (
             <View style={styles.chipContainerStyle} key={option}>
               <Chip
-                title={option}
+                title={capitalize(option)}
                 isSelected={selectedOptions.includes(option)}
                 onPress={() => {
                   updateSelectedOptions(option);
