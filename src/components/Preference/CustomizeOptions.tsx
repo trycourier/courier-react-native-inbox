@@ -92,7 +92,7 @@ function CustomizeOptions({
     handlePreferenceChange({
       ...recipientPreference,
       hasCustomRouting: !checked,
-      routingPreferences: !checked ? ['email', 'push'] : [],
+      routingPreferences: !checked ? allOptions : [],
     });
   };
   return (
