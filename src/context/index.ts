@@ -1,5 +1,3 @@
-export {
-  default as CourierProvider,
-  useCourier,
-  useBrand,
-} from './CourierProvider';
+export { useReactNativeCourier, useBrand } from './CourierReactNativeProvider';
+
+export { default as CourierProvider } from './CourierProviderWrapper';

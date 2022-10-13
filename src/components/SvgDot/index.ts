@@ -1,1 +1,1 @@
-export { default as SvgDot } from './SvgDot';
+export { default as SvgDot, Dotsize } from './SvgDot';

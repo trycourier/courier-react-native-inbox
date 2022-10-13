@@ -1,3 +1,4 @@
+import type { IActionBlock, ITextBlock } from '@trycourier/react-provider';
 import type {
   GET_MESSAGES_INIT,
   GET_MESSAGES_SUCCESS,
@@ -5,26 +6,20 @@ import type {
   SET_MESSAGES,
 } from './MessagesActions';
 
-type BlocksEntity = {
-  type: 'action' | 'text';
-  text: string;
-  url?: string;
-  __typename: string;
-};
-
 export interface TrackingIds {
-  archiveTrackingId: string;
-  clickTrackingId: string;
-  deliverTrackingId: string;
-  readTrackingId: string;
-  unreadTrackingId: string;
-  __typename: string;
+  archiveTrackingId?: string;
+  clickTrackingId?: string;
+  deliverTrackingId?: string;
+  readTrackingId?: string;
+  unreadTrackingId?: string;
+  channelTrackingId?: string;
+  __typename?: string;
 }
 
 type Content = {
   title: string;
   body: string;
-  blocks?: BlocksEntity[] | null;
+  blocks?: (ITextBlock | IActionBlock)[] | null;
   data?: null;
   trackingIds: TrackingIds;
   __typename: string;

@@ -7,7 +7,7 @@ import {
   Text,
   StyleSheet,
 } from 'react-native';
-import { useBrand } from '../../context/CourierProvider';
+import { useBrand } from '../../context/CourierReactNativeProvider';
 import { WHITE } from '../../constants/colors';
 
 const styles = StyleSheet.create({

@@ -2,11 +2,12 @@ import { View, Text, StyleSheet } from 'react-native';
 import React from 'react';
 import formatDistanceToNowStrict from 'date-fns/formatDistanceToNowStrict';
 import type { MessageType } from 'src/hooks/useMessage/MessagesStore/Messagestypes';
+import type { IActionBlock, ITextBlock } from '@trycourier/react-provider';
 import { SvgDot } from '../SvgDot';
 import { SEMI_BOLD } from '../../constants/fontSize';
 import { GRAY } from '../../constants/colors';
 import { BurgerIcon } from '../BurgerIcon';
-import { useBrand } from '../../context/CourierProvider';
+import { useBrand } from '../../context/CourierReactNativeProvider';
 import { OpenButtonUrl } from '../OpenButtonUrl';
 
 const styles = StyleSheet.create({
@@ -72,19 +73,20 @@ function Message({ onPress, message, onActionSuccess }: Prop) {
     colors: { primary },
   } = useBrand();
 
-  console.log('brand', useBrand());
   const getFormattedDate = () =>
     formatDistanceToNowStrict(new Date(createdAt), { addSuffix: false });
 
-  const renderBody = blocks?.find((block) => block.type === 'text')?.text ?? '';
-  const { url: actionButtonUrl = '', text: actionButtonText } = blocks?.find(
+  const renderBody = (blocks?.find(
+    (block) => block.type === 'text'
+  ) as ITextBlock) ?? { text: '' };
+  const { url: actionButtonUrl = '', text: actionButtonText } = (blocks?.find(
     (block) => block.type === 'action'
-  ) ?? {
+  ) as IActionBlock) ?? {
     url: '',
     text: '',
   };
 
-  const showBody = () => Boolean(renderBody);
+  const showBody = () => Boolean(renderBody.text);
   const showButton = () =>
     Boolean(actionButtonText) && Boolean(actionButtonUrl);
 
@@ -95,7 +97,7 @@ function Message({ onPress, message, onActionSuccess }: Prop) {
         <View style={styles.notificationBodyContainer}>
           <Text style={styles.headerTextStyle}>{title}</Text>
           {showBody() && (
-            <Text style={styles.subHeaderStyle}>{renderBody}</Text>
+            <Text style={styles.subHeaderStyle}>{renderBody.text}</Text>
           )}
           {showButton() && (
             <View style={styles.flexRow}>

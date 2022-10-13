@@ -51,6 +51,7 @@
   "devDependencies": {
     "@commitlint/config-conventional": "^11.0.0",
     "@react-native-community/eslint-plugin": "^1.2.0",
+    "@react-navigation/native": "^6.0.11",
     "@release-it/conventional-changelog": "^2.0.0",
     "@types/jest": "^26.0.0",
     "@types/react": "~17.0.21",
@@ -80,6 +81,7 @@
     "typescript": "~4.3.5"
   },
   "peerDependencies": {
+    "@react-navigation/native": "*",
     "react": "*",
     "react-native": "*"
   },
@@ -127,8 +129,9 @@
     ]
   },
   "dependencies": {
-    "@trycourier/client-graphql": "^1.19.1",
-    "date-fns": "^2.28.0"
+    "@trycourier/react-provider": "^1.20.0",
+    "date-fns": "^2.28.0",
+    "localstorage-polyfill": "^1.0.1"
   },
   "husky": {
     "hooks": {

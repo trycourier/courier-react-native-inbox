@@ -3,7 +3,7 @@ import React from 'react';
 import type { ViewStyle } from 'react-native';
 import { GRAY } from '../../constants/colors';
 import { SEMI_BOLD } from '../../constants/fontSize';
-import { useBrand } from '../../context/CourierProvider';
+import { useBrand } from '../../context/CourierReactNativeProvider';
 
 type PropType = {
   isActive: boolean;

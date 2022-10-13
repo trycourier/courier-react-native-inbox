@@ -2,12 +2,15 @@ import { View, StyleSheet, ViewStyle } from 'react-native';
 import React from 'react';
 import DotText from './DotText';
 
+export type Dotsize = 4 | 8 | 12 | 26;
+
 type Prop = {
-  size: 4 | 8 | 26;
+  size: Dotsize;
   color: string;
   style?: ViewStyle;
   show?: boolean;
   value?: number;
+  showNumber?: boolean;
 };
 
 const getColor = ({ show, dotColor }: { show: boolean; dotColor: string }) => {
@@ -15,7 +18,13 @@ const getColor = ({ show, dotColor }: { show: boolean; dotColor: string }) => {
   return dotColor;
 };
 
-function SvgDot({ size, color, style, show = true, value }: Prop) {
+const getFontSize = (size: Dotsize) => {
+  if (size === 26) return 18;
+  if (size === 12) return 10;
+  return 4;
+};
+
+function SvgDot({ size, color, style, show = true, value, showNumber }: Prop) {
   const styles = StyleSheet.create({
     container: {
       backgroundColor: getColor({ show, dotColor: color }),
@@ -33,11 +42,11 @@ function SvgDot({ size, color, style, show = true, value }: Prop) {
     },
   });
 
-  if (typeof value !== 'undefined') {
+  if (typeof value !== 'undefined' && showNumber) {
     if (value === 0) return null;
     return (
       <View style={[styles.container, styles.flexibleHeightWidth, style]}>
-        <DotText value={value} />
+        <DotText value={value} fontSize={getFontSize(size)} />
       </View>
     );
   }
@@ -52,3 +61,7 @@ SvgDot.defaultProps = {
 };
 
 export default SvgDot;
+
+SvgDot.defaultProps = {
+  showNumber: true,
+};
