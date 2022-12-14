@@ -22,16 +22,16 @@ type Content = {
   blocks?: (ITextBlock | IActionBlock)[] | null;
   data?: null;
   trackingIds: TrackingIds;
-  __typename: string;
+  __typename?: string;
 };
 export interface MessageType {
   id: string;
   messageId: string;
   created: string;
-  read: boolean;
-  tags?: null[] | null;
+  read?: boolean;
+  tags?: string[] | null;
   content: Content;
-  __typename: string;
+  __typename?: string;
 }
 
 export interface GetMessagesSuccessResp {
