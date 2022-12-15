@@ -1,6 +1,6 @@
 {
   "name": "@trycourier/react-native-inbox",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "a react native library for tryCourier integration",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -29,8 +29,10 @@
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "build": "bob build",
     "release": "release-it",
+    "deploy": "yarn prepack && yarn release",
     "example": "yarn --cwd example",
     "pods": "cd example && pod-install --quiet",
+    "setup": "yarn link && cd example && yarn link \"@trycourier/react-native-inbox\"",
     "prepare": "husky install",
     "commit": "cz"
   },
