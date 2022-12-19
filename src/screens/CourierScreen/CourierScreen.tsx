@@ -34,6 +34,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: SEMI_BOLD,
     marginRight: 8,
+    color: 'black',
   },
   overAll: {
     justifyContent: 'space-between',
