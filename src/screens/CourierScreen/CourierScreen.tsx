@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native';
 import React, { useState } from 'react';
 
-// import LinearGradient from 'react-native-linear-gradient';
+import LinearGradient from 'react-native-linear-gradient';
 import { FullScreenIndicator, SvgDot } from '../../components';
 import { WHITE } from '../../constants/colors';
 import { BOLD, SEMI_BOLD } from '../../constants/fontSize';
@@ -78,10 +78,21 @@ function CourierScreen() {
     isBrandLoading,
     borderRadius,
     colors: { primary },
-    // widgetBackground: { topColor, bottomColor },
+    widgetBackground,
     isBrandLoadingError,
   } = useBrand();
+
+  let topColor = 'rgb(39,22,55)';
+  let bottomColor = 'rgb(80,66,82)';
   const normalizedBorderRadius = Number(borderRadius.replace('px', ''));
+
+  if (widgetBackground?.topColor) {
+    topColor = widgetBackground.topColor;
+  }
+
+  if (widgetBackground?.bottomColor) {
+    bottomColor = widgetBackground.bottomColor;
+  }
 
   const headerContainerStyle = {
     ...styles.headerContainer,
@@ -100,8 +111,7 @@ function CourierScreen() {
     );
 
   return (
-    // <LinearGradient colors={[topColor, bottomColor]} style={styles.container}>
-    <View style={styles.container}>
+    <LinearGradient colors={[topColor, bottomColor]} style={styles.container}>
       <View style={styles.overAll}>
         <View style={styles.messagesContainer}>
           <View style={headerContainerStyle}>
@@ -133,7 +143,7 @@ function CourierScreen() {
         </View>
         <Footer />
       </View>
-    </View>
+    </LinearGradient>
   );
 }
 
