@@ -89,9 +89,17 @@ function MessageList({ isRead, setMessagesCount }: PropType) {
     setMessagesCount,
   });
 
-  const {
-    emptyState: { textColor, text: emptyText },
-  } = useBrand();
+  let textColor = 'black';
+  let emptyText = 'No Message Found';
+
+  const { emptyState } = useBrand();
+
+  if (emptyState?.textColor) {
+    textColor = emptyState.textColor;
+  }
+  if (emptyState?.text) {
+    emptyText = emptyState.text;
+  }
 
   useEffect(() => {
     resetMessages();
