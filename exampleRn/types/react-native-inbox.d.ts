@@ -1,6 +1,5 @@
 type SizeType = 'sm' | 'md' | 'lg';
 declare module '@trycourier/react-native-inbox' {
-  export const testFunction: () => string;
   export const CourierProvider: ({
     children: _c,
     clientKey: _ck,
