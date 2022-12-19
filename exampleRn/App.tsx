@@ -1,48 +1,13 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * Generated with the TypeScript template
- * https://github.com/react-native-community/react-native-template-typescript
- *
- * @format
- */
-
 import React from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import {CourierProvider, CourierScreen} from '@trycourier/react-native-inbox';
 
-import {Colors} from 'react-native/Libraries/NewAppScreen';
-import {testFunction} from '@trycourier/react-native-inbox';
+import {CLIENT_KEY, USER_ID, BRAND_ID} from '@env';
 
 const App = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-    height: '100%',
-  };
-
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <View>
-          <Text>{testFunction()}</Text>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <CourierProvider clientKey={CLIENT_KEY} userId={USER_ID} brandId={BRAND_ID}>
+      <CourierScreen />
+    </CourierProvider>
   );
 };
 

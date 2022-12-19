@@ -8,6 +8,12 @@ module.exports = function (api) {
     presets: ['module:metro-react-native-babel-preset'],
     plugins: [
       [
+        'module:react-native-dotenv',
+        {
+          safe: true,
+        },
+      ],
+      [
         'module-resolver',
         {
           extensions: ['.tsx', '.ts', '.js', '.json'],

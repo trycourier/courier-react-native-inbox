@@ -4,7 +4,6 @@ import { StatusBar } from 'expo-status-bar';
 import { CourierProvider } from '@trycourier/react-native-inbox';
 // eslint-disable-next-line
 import { CLIENT_KEY, USER_ID, BRAND_ID, SHOW_LOGS } from '@env';
-import { LinearGradient } from 'expo-linear-gradient';
 import { startNetworkLogging } from 'react-native-network-logger';
 import { Navigation } from './navigation';
 import { CustomNetworkLogger } from './components/CustomNetworkLogger';
@@ -20,7 +19,6 @@ export default function App() {
         clientKey={CLIENT_KEY}
         userId={USER_ID}
         brandId={BRAND_ID}
-        linearGradientProvider={LinearGradient}
       >
         <Navigation />
         {/* eslint react/style-prop-object: 0 */}

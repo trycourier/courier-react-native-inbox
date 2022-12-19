@@ -9,13 +9,11 @@ function CourierProviderWrapper({
   userId,
   clientKey,
   brandId,
-  linearGradientProvider,
 }: Props) {
   return (
     <CourierProvider userId={userId} clientKey={clientKey}>
       <CourierReactNativeProvider
         userId={userId}
-        linearGradientProvider={linearGradientProvider}
         clientKey={clientKey}
         brandId={brandId}
       >

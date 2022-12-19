@@ -134,7 +134,8 @@
   "dependencies": {
     "@trycourier/react-provider": "1.50.0",
     "date-fns": "^2.28.0",
-    "localstorage-polyfill": "^1.0.1"
+    "localstorage-polyfill": "^1.0.1",
+    "react-native-linear-gradient": "^2.6.2"
   },
   "husky": {
     "hooks": {
