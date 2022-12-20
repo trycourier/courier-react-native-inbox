@@ -7,28 +7,20 @@ import React, {
 } from 'react';
 import { Brands, createCourierClient } from '@trycourier/client-graphql';
 import type { Client } from 'urql';
-import type { ReactElement } from 'react';
 import type { BrandConfig } from './Brands/brands.types';
 import { brandInitialConfig } from './Brands/initialConfig';
-
-type LinearGradientType = Omit<
-  ReactElement<any, any>,
-  'type' | 'key' | 'props'
->;
 
 export type Props = {
   children: JSX.Element | JSX.Element[];
   userId: string;
   clientKey: string;
   brandId: string;
-  linearGradientProvider: LinearGradientType;
 };
 
 type CourierContextType = {
   courierClient?: Client;
   brandConfig: BrandConfig;
   isBrandLoading: boolean;
-  linearGradient?: React.ElementType;
   isBrandLoadingError?: boolean;
 };
 
@@ -50,7 +42,6 @@ function CourierReactNativeProvider({
   userId,
   clientKey,
   brandId,
-  linearGradientProvider,
 }: Props) {
   const [brandConfig, setBrandsConfig] =
     useState<BrandConfig>(brandInitialConfig);
@@ -94,7 +85,6 @@ function CourierReactNativeProvider({
         courierClient,
         brandConfig,
         isBrandLoading,
-        linearGradient: linearGradientProvider as React.ElementType,
         isBrandLoadingError,
       }}
     >
@@ -106,8 +96,8 @@ function CourierReactNativeProvider({
 export default CourierReactNativeProvider;
 
 export const useReactNativeCourier = () => {
-  const { courierClient, linearGradient } = useContext(CourierContext);
-  return { courierClient, linearGradient };
+  const { courierClient } = useContext(CourierContext);
+  return { courierClient };
 };
 
 export const useBrand = () => {

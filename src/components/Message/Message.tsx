@@ -29,6 +29,7 @@ const styles = StyleSheet.create({
 
   headerTextStyle: {
     fontWeight: SEMI_BOLD,
+    color: 'black',
   },
   subHeaderStyle: {
     fontSize: 12,

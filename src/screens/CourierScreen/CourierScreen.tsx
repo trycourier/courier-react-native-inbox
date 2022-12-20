@@ -1,16 +1,14 @@
 import { View, Text, StyleSheet } from 'react-native';
 import React, { useState } from 'react';
 
+import LinearGradient from 'react-native-linear-gradient';
 import { FullScreenIndicator, SvgDot } from '../../components';
 import { WHITE } from '../../constants/colors';
 import { BOLD, SEMI_BOLD } from '../../constants/fontSize';
 import { Tab, Tabs } from '../../components/Tabs';
 import MessageList from './MessageList/MessageList';
 import { Footer } from '../../components/Footer';
-import {
-  useBrand,
-  useReactNativeCourier,
-} from '../../context/CourierReactNativeProvider';
+import { useBrand } from '../../context/CourierReactNativeProvider';
 
 const UNREAD_TAB_NAME = 'Unread';
 const ALL_NOTIFICATIONS_TAB_NAME = 'All notifications';
@@ -18,7 +16,7 @@ const ALL_NOTIFICATIONS_TAB_NAME = 'All notifications';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: WHITE,
+    // backgroundColor: WHITE,
     flexGrow: 1,
   },
   headerContainer: {
@@ -36,6 +34,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: SEMI_BOLD,
     marginRight: 8,
+    color: 'black',
   },
   overAll: {
     justifyContent: 'space-between',
@@ -63,7 +62,6 @@ const styles = StyleSheet.create({
 });
 
 function CourierScreen() {
-  const { linearGradient } = useReactNativeCourier();
   const [messagesCount, setMessagesCount] = useState(0);
   const [activeTab, setActiveTab] = useState<
     typeof UNREAD_TAB_NAME | typeof ALL_NOTIFICATIONS_TAB_NAME
@@ -81,10 +79,21 @@ function CourierScreen() {
     isBrandLoading,
     borderRadius,
     colors: { primary },
-    widgetBackground: { topColor, bottomColor },
+    widgetBackground,
     isBrandLoadingError,
   } = useBrand();
+
+  let topColor = 'rgb(39,22,55)';
+  let bottomColor = 'rgb(80,66,82)';
   const normalizedBorderRadius = Number(borderRadius.replace('px', ''));
+
+  if (widgetBackground?.topColor) {
+    topColor = widgetBackground.topColor;
+  }
+
+  if (widgetBackground?.bottomColor) {
+    bottomColor = widgetBackground.bottomColor;
+  }
 
   const headerContainerStyle = {
     ...styles.headerContainer,
@@ -92,8 +101,6 @@ function CourierScreen() {
     borderTopRightRadius: normalizedBorderRadius,
   };
 
-  if (typeof linearGradient === 'undefined') return null;
-  const LinearGradient = linearGradient as any;
   if (isBrandLoading) return <FullScreenIndicator />;
   if (isBrandLoadingError)
     return (

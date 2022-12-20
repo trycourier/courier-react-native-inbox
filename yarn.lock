@@ -2554,9 +2554,9 @@
     rimraf "^3.0.2"
     urql "^2.0.1"
 
-"@trycourier/react-provider@^1.50.0":
+"@trycourier/react-provider@1.50.0":
   version "1.50.0"
-  resolved "https://registry.npmjs.org/@trycourier/react-provider/-/react-provider-1.50.0.tgz"
+  resolved "https://registry.yarnpkg.com/@trycourier/react-provider/-/react-provider-1.50.0.tgz#7ec3ceac682184f42fccaf37650fa7a7fc0bd988"
   integrity sha512-gTguJxtnXkzABuBBqO9c7tTqPe8qfg73JRqpw5yg3L0wwk0i0V1epGJZZqM4zZ7gcJem8KrtYW5jLAd68+Fkrw==
   dependencies:
     "@trycourier/client-graphql" "^1.50.0"
@@ -9153,6 +9153,11 @@ react-native-builder-bob@^0.20.0:
     yargs "^17.5.1"
   optionalDependencies:
     jetifier "^2.0.0"
+
+react-native-linear-gradient@^2.6.2:
+  version "2.6.2"
+  resolved "https://registry.yarnpkg.com/react-native-linear-gradient/-/react-native-linear-gradient-2.6.2.tgz#56598a76832724b2afa7889747635b5c80948f38"
+  integrity sha512-Z8Xxvupsex+9BBFoSYS87bilNPWcRfRsGC0cpJk72Nxb5p2nEkGSBv73xZbEHnW2mUFvP+huYxrVvjZkr/gRjQ==
 
 react-native@0.63.4:
   version "0.63.4"
