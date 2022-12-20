@@ -89,7 +89,7 @@ function MessageList({ isRead, setMessagesCount }: PropType) {
     setMessagesCount,
   });
 
-  let textColor = 'black';
+  let textColor = '#fff';
   let emptyText = 'No Message Found';
 
   const { emptyState } = useBrand();
