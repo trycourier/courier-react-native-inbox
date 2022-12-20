@@ -1,7 +1,8 @@
 import { View, Text, StyleSheet } from 'react-native';
 import React, { useState } from 'react';
+import type { ViewStyle } from 'react-native';
 
-import LinearGradient from 'react-native-linear-gradient';
+import LinearGradientRn from 'react-native-linear-gradient';
 import { FullScreenIndicator, SvgDot } from '../../components';
 import { WHITE } from '../../constants/colors';
 import { BOLD, SEMI_BOLD } from '../../constants/fontSize';
@@ -12,6 +13,12 @@ import { useBrand } from '../../context/CourierReactNativeProvider';
 
 const UNREAD_TAB_NAME = 'Unread';
 const ALL_NOTIFICATIONS_TAB_NAME = 'All notifications';
+
+const LinearGradient = LinearGradientRn as unknown as (_props: {
+  colors: string[];
+  children: React.ReactElement;
+  style: ViewStyle;
+}) => JSX.Element;
 
 const styles = StyleSheet.create({
   container: {
