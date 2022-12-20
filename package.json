@@ -29,7 +29,7 @@
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "build": "bob build",
     "release": "release-it",
-    "deploy": "yarn prepack && yarn release",
+    "deploy": "yarn build && yarn release",
     "example": "yarn --cwd example",
     "pods": "cd example && pod-install --quiet",
     "setup": "yarn link && cd example && yarn link \"@trycourier/react-native-inbox\"",
