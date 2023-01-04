@@ -6,7 +6,7 @@ import {
   TextStyle,
   FlatList,
   ActivityIndicator,
-  Pressable,
+  TouchableOpacity,
 } from 'react-native';
 import { useMessage } from '../../../hooks/useMessage';
 import type {
@@ -149,7 +149,7 @@ function MessageList({ isRead, setMessagesCount, onMessageClick }: PropType) {
       <FlatList
         data={renderMessages}
         renderItem={({ item, index }) => (
-          <Pressable
+          <TouchableOpacity
             onPress={
               typeof onMessageClick === 'function'
                 ? () => onMessageClick(item)
@@ -164,7 +164,7 @@ function MessageList({ isRead, setMessagesCount, onMessageClick }: PropType) {
               }}
               isFirst={index === 0}
             />
-          </Pressable>
+          </TouchableOpacity>
         )}
         keyExtractor={({ id }) => id}
         onEndReached={fetchMoreMessages}
