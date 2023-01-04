@@ -56,15 +56,19 @@ const styles = StyleSheet.create({
   flexRow: {
     flexDirection: 'row',
   },
+  firstMessageMargin: {
+    marginTop: 6,
+  },
 });
 
 type Prop = {
   onPress: (_msg: MessageType) => void;
   message: MessageType;
   onActionSuccess: () => void;
+  isFirst?: boolean;
 };
 
-function Message({ onPress, message, onActionSuccess }: Prop) {
+function Message({ onPress, message, onActionSuccess, isFirst }: Prop) {
   const {
     content: { title, blocks },
     read,
@@ -92,7 +96,9 @@ function Message({ onPress, message, onActionSuccess }: Prop) {
     Boolean(actionButtonText) && Boolean(actionButtonUrl);
 
   return (
-    <View style={styles.overAll}>
+    <View
+      style={{ ...styles.overAll, ...(isFirst && styles.firstMessageMargin) }}
+    >
       <View style={styles.messageContainer}>
         <SvgDot size={8} color={primary} style={styles.dotStyle} show={!read} />
         <View style={styles.notificationBodyContainer}>
@@ -126,3 +132,7 @@ function Message({ onPress, message, onActionSuccess }: Prop) {
 }
 
 export default Message;
+
+Message.defaultProps = {
+  isFirst: false,
+};

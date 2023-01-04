@@ -155,13 +155,14 @@ function MessageList({ isRead, setMessagesCount }: PropType) {
         )}
         <FlatList
           data={renderMessages}
-          renderItem={({ item }) => (
+          renderItem={({ item, index }) => (
             <Message
               message={item}
               onPress={handleMessageSelection}
               onActionSuccess={() => {
                 updateMessageRead({ read: true, selectedId: item.id });
               }}
+              isFirst={index === 0}
             />
           )}
           keyExtractor={({ id }) => id}

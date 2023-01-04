@@ -28,7 +28,6 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     backgroundColor: WHITE,
-    marginBottom: 4,
   },
   headerStyle: {
     flexDirection: 'row',
