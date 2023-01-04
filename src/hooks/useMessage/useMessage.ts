@@ -114,7 +114,7 @@ const useMessage = ({ isRead, setMessagesCount }: Props) => {
   }
 
   const fetchMoreMessages = () => {
-    if (startCursor !== null) {
+    if (startCursor !== null && !isLoading) {
       fetchData(startCursor);
     }
   };

@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TextStyle, FlatList } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextStyle,
+  FlatList,
+  ActivityIndicator,
+} from 'react-native';
 import { useMessage } from '../../../hooks/useMessage';
 import type {
   isReadType,
@@ -30,17 +37,7 @@ const styles = StyleSheet.create({
     fontWeight: BOLD,
   },
   infiniteScrollLoaderContainer: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: LIGHT_GRAY,
-    zIndex: 2,
-    opacity: 0.5,
-  },
-  overAll: {
-    position: 'relative',
+    marginBottom: 6,
   },
   bottomMenuContainer: {
     alignItems: 'center',
@@ -147,31 +144,29 @@ function MessageList({ isRead, setMessagesCount }: PropType) {
 
   return (
     <>
-      <View style={styles.overAll}>
-        {isLoading && (
-          <View style={styles.infiniteScrollLoaderContainer}>
-            <FullScreenIndicator />
-          </View>
+      <FlatList
+        data={renderMessages}
+        renderItem={({ item, index }) => (
+          <Message
+            message={item}
+            onPress={handleMessageSelection}
+            onActionSuccess={() => {
+              updateMessageRead({ read: true, selectedId: item.id });
+            }}
+            isFirst={index === 0}
+          />
         )}
-        <FlatList
-          data={renderMessages}
-          renderItem={({ item, index }) => (
-            <Message
-              message={item}
-              onPress={handleMessageSelection}
-              onActionSuccess={() => {
-                updateMessageRead({ read: true, selectedId: item.id });
-              }}
-              isFirst={index === 0}
-            />
-          )}
-          keyExtractor={({ id }) => id}
-          onEndReached={fetchMoreMessages}
-          onEndReachedThreshold={0.01}
-          showsHorizontalScrollIndicator={false}
-          showsVerticalScrollIndicator={false}
-        />
-      </View>
+        keyExtractor={({ id }) => id}
+        onEndReached={fetchMoreMessages}
+        onEndReachedThreshold={0.01}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
+      />
+      {isLoading && (
+        <View style={styles.infiniteScrollLoaderContainer}>
+          <ActivityIndicator />
+        </View>
+      )}
       <BottomModal open={isBottomModalOpen} onClose={closeBottomModal}>
         <View style={styles.bottomMenuContainer}>
           {typeof selectedMessage !== 'undefined' && (
