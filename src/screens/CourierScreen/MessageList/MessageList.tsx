@@ -6,6 +6,7 @@ import {
   TextStyle,
   FlatList,
   ActivityIndicator,
+  Pressable,
 } from 'react-native';
 import { useMessage } from '../../../hooks/useMessage';
 import type {
@@ -24,6 +25,7 @@ import { useBrand } from '../../../context/CourierReactNativeProvider';
 type PropType = {
   isRead: isReadType;
   setMessagesCount: React.Dispatch<React.SetStateAction<number>>;
+  onMessageClick?: (_m: MessageType) => void;
 };
 
 const styles = StyleSheet.create({
@@ -69,7 +71,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function MessageList({ isRead, setMessagesCount }: PropType) {
+function MessageList({ isRead, setMessagesCount, onMessageClick }: PropType) {
   const {
     renderMessages,
     isLoading,
@@ -147,14 +149,22 @@ function MessageList({ isRead, setMessagesCount }: PropType) {
       <FlatList
         data={renderMessages}
         renderItem={({ item, index }) => (
-          <Message
-            message={item}
-            onPress={handleMessageSelection}
-            onActionSuccess={() => {
-              updateMessageRead({ read: true, selectedId: item.id });
-            }}
-            isFirst={index === 0}
-          />
+          <Pressable
+            onPress={
+              typeof onMessageClick === 'function'
+                ? () => onMessageClick(item)
+                : () => {}
+            }
+          >
+            <Message
+              message={item}
+              onPress={handleMessageSelection}
+              onActionSuccess={() => {
+                updateMessageRead({ read: true, selectedId: item.id });
+              }}
+              isFirst={index === 0}
+            />
+          </Pressable>
         )}
         keyExtractor={({ id }) => id}
         onEndReached={fetchMoreMessages}
@@ -196,5 +206,9 @@ function MessageList({ isRead, setMessagesCount }: PropType) {
     </>
   );
 }
+
+MessageList.defaultProps = {
+  onMessageClick: undefined,
+};
 
 export default MessageList;

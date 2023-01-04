@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import type { ViewStyle } from 'react-native';
 
 import LinearGradientRn from 'react-native-linear-gradient';
+import type { MessageType } from 'src/hooks/useMessage/MessagesStore/Messagestypes';
 import { FullScreenIndicator, SvgDot } from '../../components';
 import { WHITE } from '../../constants/colors';
 import { BOLD, SEMI_BOLD } from '../../constants/fontSize';
@@ -67,7 +68,11 @@ const styles = StyleSheet.create({
   },
 });
 
-function CourierScreen() {
+type PropType = {
+  onMessageClick?: (_m: MessageType) => void;
+};
+
+function CourierScreen({ onMessageClick }: PropType) {
   const [messagesCount, setMessagesCount] = useState(0);
   const [activeTab, setActiveTab] = useState<
     typeof UNREAD_TAB_NAME | typeof ALL_NOTIFICATIONS_TAB_NAME
@@ -141,7 +146,11 @@ function CourierScreen() {
           </View>
           <View style={styles.flatListContainerStyle}>
             {activeTab === 'All notifications' && (
-              <MessageList isRead="all" setMessagesCount={setMessagesCount} />
+              <MessageList
+                isRead="all"
+                setMessagesCount={setMessagesCount}
+                onMessageClick={onMessageClick}
+              />
             )}
             {activeTab === 'Unread' && (
               <MessageList isRead={false} setMessagesCount={setMessagesCount} />
@@ -153,5 +162,9 @@ function CourierScreen() {
     </LinearGradient>
   );
 }
+
+CourierScreen.defaultProps = {
+  onMessageClick: undefined,
+};
 
 export default CourierScreen;
