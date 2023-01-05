@@ -78,11 +78,9 @@ function CourierScreen({ onMessageClick }: PropType) {
     typeof UNREAD_TAB_NAME | typeof ALL_NOTIFICATIONS_TAB_NAME
   >('Unread');
   const setUnreadActive = () => {
-    setMessagesCount(0);
     setActiveTab('Unread');
   };
   const setAllNotificationsActive = () => {
-    setMessagesCount(0);
     setActiveTab('All notifications');
   };
 
@@ -153,7 +151,11 @@ function CourierScreen({ onMessageClick }: PropType) {
               />
             )}
             {activeTab === 'Unread' && (
-              <MessageList isRead={false} setMessagesCount={setMessagesCount} />
+              <MessageList
+                isRead={false}
+                setMessagesCount={setMessagesCount}
+                onMessageClick={onMessageClick}
+              />
             )}
           </View>
         </View>
