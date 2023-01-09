@@ -10,7 +10,10 @@ import { BOLD, SEMI_BOLD } from '../../constants/fontSize';
 import { Tab, Tabs } from '../../components/Tabs';
 import MessageList from './MessageList/MessageList';
 import { Footer } from '../../components/Footer';
-import { useBrand } from '../../context/CourierReactNativeProvider';
+import {
+  useBrand,
+  useCourierProviderMessage,
+} from '../../context/CourierReactNativeProvider';
 
 const UNREAD_TAB_NAME = 'Unread';
 const ALL_NOTIFICATIONS_TAB_NAME = 'All notifications';
@@ -73,7 +76,7 @@ type PropType = {
 };
 
 function CourierScreen({ onMessageClick }: PropType) {
-  const [messagesCount, setMessagesCount] = useState(0);
+  const { messagesCount } = useCourierProviderMessage();
   const [activeTab, setActiveTab] = useState<
     typeof UNREAD_TAB_NAME | typeof ALL_NOTIFICATIONS_TAB_NAME
   >('Unread');
@@ -144,18 +147,10 @@ function CourierScreen({ onMessageClick }: PropType) {
           </View>
           <View style={styles.flatListContainerStyle}>
             {activeTab === 'All notifications' && (
-              <MessageList
-                isRead="all"
-                setMessagesCount={setMessagesCount}
-                onMessageClick={onMessageClick}
-              />
+              <MessageList isRead="all" onMessageClick={onMessageClick} />
             )}
             {activeTab === 'Unread' && (
-              <MessageList
-                isRead={false}
-                setMessagesCount={setMessagesCount}
-                onMessageClick={onMessageClick}
-              />
+              <MessageList isRead={false} onMessageClick={onMessageClick} />
             )}
           </View>
         </View>

@@ -9,6 +9,7 @@ function CourierProviderWrapper({
   userId,
   clientKey,
   brandId,
+  onNewMessage,
 }: Props) {
   return (
     <CourierProvider userId={userId} clientKey={clientKey}>
@@ -16,6 +17,7 @@ function CourierProviderWrapper({
         userId={userId}
         clientKey={clientKey}
         brandId={brandId}
+        onNewMessage={onNewMessage}
       >
         {children}
       </CourierReactNativeProvider>

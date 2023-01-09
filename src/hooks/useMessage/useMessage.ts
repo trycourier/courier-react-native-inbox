@@ -1,28 +1,17 @@
-import { useEffect, useMemo, useReducer, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Events, Messages } from '@trycourier/client-graphql';
-import { useCourier } from '@trycourier/react-provider';
-import type { ICourierMessage } from '@trycourier/react-provider';
-import { useReactNativeCourier } from '../../context/CourierReactNativeProvider';
 import {
-  messagesInitialState,
-  messagesReducer,
-} from './MessagesStore/MessagesReducer';
+  useCourierProviderMessage,
+  useReactNativeCourier,
+} from '../../context/CourierReactNativeProvider';
 import type {
-  GetMessagesSuccessPayloadType,
   isReadType,
   MessageType,
   TrackingIds,
 } from './MessagesStore/Messagestypes';
-import {
-  getMessagesInitAction,
-  getMessagesSuccessAction,
-  messageStopLoadingAction,
-  setMessagesAction,
-} from './MessagesStore/MessagesActions';
 
 type Props = {
   isRead: isReadType;
-  setMessagesCount: React.Dispatch<React.SetStateAction<number>>;
 };
 
 const getQueryParams = (isRead: isReadType) => {
@@ -30,59 +19,24 @@ const getQueryParams = (isRead: isReadType) => {
   return { isRead };
 };
 
-const ImessageToMessageTypeConverter = (
-  message: ICourierMessage
-): MessageType => {
-  const convertedMessage: MessageType = {
-    content: {
-      title: message.title as string,
-      body: message.body as string,
-      trackingIds: message.data?.trackingIds ?? {},
-      blocks: message.blocks || [],
-      __typename: '',
-    },
-    id: message.data?.trackingUrl || Math.floor(Math.random() * 1e7).toString(),
-    messageId:
-      message.data?.trackingUrl || Math.floor(Math.random() * 1e7).toString(),
-    created: new Date().toISOString(),
-    read: false,
-    __typename: '',
-  };
-  return convertedMessage;
-};
-
-const useMessage = ({ isRead, setMessagesCount }: Props) => {
+const useMessage = ({ isRead }: Props) => {
   const { courierClient } = useReactNativeCourier();
   const { getMessages, getMessageCount } = Messages({ client: courierClient });
   const { trackEvent } = Events({ client: courierClient });
-  const courier = useCourier();
+  const {
+    getMessageSuccess,
+    getMessagesInit,
+    messagesStopLoading,
+    messages,
+    startCursor,
+    isLoading,
+    updateMessageRead,
+    setMessagesCount,
+  } = useCourierProviderMessage();
 
-  const [{ messages, isLoading, startCursor }, dispatch] = useReducer(
-    messagesReducer,
-    messagesInitialState
-  );
   const [selectedMessage, setSelectedMessage] = useState<
     MessageType | undefined
   >();
-
-  useEffect(() => {
-    courier.transport.intercept((message: ICourierMessage) => {
-      // converting ICourierMessage to MessageType
-      const newMessage = ImessageToMessageTypeConverter(message);
-      const updatedMessages = [newMessage, ...messages];
-      dispatch(setMessagesAction({ payload: { messages: updatedMessages } }));
-      setMessagesCount((prev) => prev + 1);
-      return message;
-    });
-  });
-
-  const getMessagesInit = () => dispatch(getMessagesInitAction());
-  const getMessageSuccess = ({
-    payload,
-  }: {
-    payload: GetMessagesSuccessPayloadType;
-  }) => dispatch(getMessagesSuccessAction({ payload }));
-  const messagesStopLoading = () => dispatch(messageStopLoadingAction());
 
   const resetMessages = () => {
     getMessageSuccess({
@@ -90,7 +44,13 @@ const useMessage = ({ isRead, setMessagesCount }: Props) => {
     });
   };
 
-  async function fetchData(fetchAfter?: string) {
+  async function fetchData({
+    fetchAfter,
+    prevMessages,
+  }: {
+    fetchAfter?: string;
+    prevMessages: MessageType[];
+  }) {
     try {
       if (!fetchAfter) {
         const messageCount = await getMessageCount(getQueryParams(isRead));
@@ -104,7 +64,7 @@ const useMessage = ({ isRead, setMessagesCount }: Props) => {
       if (messagesResp) {
         const payload = {
           ...messagesResp,
-          messages: [...messages, ...messagesResp.messages],
+          messages: [...prevMessages, ...messagesResp.messages],
         };
         getMessageSuccess({ payload });
       }
@@ -115,27 +75,8 @@ const useMessage = ({ isRead, setMessagesCount }: Props) => {
 
   const fetchMoreMessages = () => {
     if (startCursor !== null && !isLoading) {
-      fetchData(startCursor);
+      fetchData({ fetchAfter: startCursor, prevMessages: messages });
     }
-  };
-
-  const updateMessageRead = ({
-    read,
-    selectedId,
-  }: {
-    read: boolean;
-    selectedId: string;
-  }) => {
-    const updatedMessages = messages.map((message) => {
-      if (message.id === selectedId) {
-        if (isRead === false && read === true) {
-          setMessagesCount((prev) => prev - 1);
-        }
-        return { ...message, read };
-      }
-      return message;
-    });
-    dispatch(setMessagesAction({ payload: { messages: updatedMessages } }));
   };
 
   const genericReadUnreadEvent =
@@ -157,6 +98,7 @@ const useMessage = ({ isRead, setMessagesCount }: Props) => {
         updateMessageRead({
           read: updatedReadValue,
           selectedId: selectedMessage.id,
+          isRead,
         });
         return Promise.resolve({ success: true });
       } catch (e) {

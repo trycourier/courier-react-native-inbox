@@ -20,11 +20,13 @@ import {
   BottomModal,
   BottomModalOption,
 } from '../../../components/BottomModal';
-import { useBrand } from '../../../context/CourierReactNativeProvider';
+import {
+  useBellIcon,
+  useBrand,
+} from '../../../context/CourierReactNativeProvider';
 
 type PropType = {
   isRead: isReadType;
-  setMessagesCount: React.Dispatch<React.SetStateAction<number>>;
   onMessageClick?: (_m: MessageType) => void;
 };
 
@@ -71,7 +73,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function MessageList({ isRead, setMessagesCount, onMessageClick }: PropType) {
+function MessageList({ isRead, onMessageClick }: PropType) {
   const {
     renderMessages,
     isLoading,
@@ -85,7 +87,6 @@ function MessageList({ isRead, setMessagesCount, onMessageClick }: PropType) {
     fetchData,
   } = useMessage({
     isRead,
-    setMessagesCount,
   });
 
   let textColor = '#fff';
@@ -102,11 +103,11 @@ function MessageList({ isRead, setMessagesCount, onMessageClick }: PropType) {
 
   useEffect(() => {
     resetMessages();
-    fetchData();
-    return resetMessages;
+    fetchData({ prevMessages: [] });
   }, []);
 
   const [isBottomModalOpen, setIsBottomModalOpen] = useState(false);
+  const { setUnReadBellIconMessageCount } = useBellIcon();
 
   const openBottomModal = () => setIsBottomModalOpen(true);
   const closeBottomModal = () => {
@@ -118,15 +119,23 @@ function MessageList({ isRead, setMessagesCount, onMessageClick }: PropType) {
   };
 
   const handleMarkMessageRead = () => {
-    markAsReadEvent().finally(() => {
-      closeBottomModal();
-    });
+    markAsReadEvent()
+      .then(() => {
+        setUnReadBellIconMessageCount((prev) => prev - 1);
+      })
+      .finally(() => {
+        closeBottomModal();
+      });
   };
 
   const handleMarkMessageUnread = () => {
-    markAsUnreadEvent().finally(() => {
-      closeBottomModal();
-    });
+    markAsUnreadEvent()
+      .then(() => {
+        setUnReadBellIconMessageCount((prev) => prev + 1);
+      })
+      .finally(() => {
+        closeBottomModal();
+      });
   };
 
   const emptyTextStyle: TextStyle = {
@@ -160,7 +169,11 @@ function MessageList({ isRead, setMessagesCount, onMessageClick }: PropType) {
               message={item}
               onPress={handleMessageSelection}
               onActionSuccess={() => {
-                updateMessageRead({ read: true, selectedId: item.id });
+                updateMessageRead({
+                  read: true,
+                  selectedId: item.id,
+                  isRead,
+                });
               }}
               isFirst={index === 0}
             />
