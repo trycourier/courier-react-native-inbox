@@ -4,8 +4,6 @@ import React, {
   useState,
   createContext,
   useContext,
-  useRef,
-  useReducer,
 } from 'react';
 import {
   Brands,
@@ -13,30 +11,14 @@ import {
   Messages,
 } from '@trycourier/client-graphql';
 import type { Client } from 'urql';
-import { Animated, Easing } from 'react-native';
 import { ICourierMessage, useCourier } from '@trycourier/react-provider';
-import type {
-  GetMessagesSuccessPayloadType,
-  isReadType,
-  MessageType,
-} from '../hooks/useMessage/MessagesStore/Messagestypes';
-import {
-  messagesInitialState,
-  messagesReducer,
-} from '../hooks/useMessage/MessagesStore/MessagesReducer';
-import {
-  getMessagesInitAction,
-  getMessagesSuccessAction,
-  messageStopLoadingAction,
-  setMessagesAction,
-} from '../hooks/useMessage/MessagesStore/MessagesActions';
+import { useMessageHook } from '../hooks/useMessage/MessagesStore/useMessagesHook';
+import type { MessageType } from '../hooks/useMessage/MessagesStore/Messagestypes';
 import type { BrandConfig } from './Brands/brands.types';
 import { brandInitialConfig } from './Brands/initialConfig';
-
-const LEFT_DURATION = 100;
-const RIGHT_DURATION = 120;
-const CENTER_DURATION = 75;
-export const DOT_DELAY = LEFT_DURATION + RIGHT_DURATION + CENTER_DURATION;
+import { AllNotificationsContext } from './AllNotificationsContext';
+import { UnreadNotificationsContext } from './UnreadNotificationsContext';
+import { useBellIcon } from './BellIconContextProvider';
 
 export type Props = {
   children: JSX.Element | JSX.Element[];
@@ -51,42 +33,13 @@ type CourierContextType = {
   brandConfig: BrandConfig;
   isBrandLoading: boolean;
   isBrandLoadingError?: boolean;
-  spin?: Animated.AnimatedInterpolation;
-  unReadBellIconMessageCount: number;
-  nudgeBellIcon: () => void;
-  setUnReadBellIconMessageCount: React.Dispatch<React.SetStateAction<number>>;
   onNewMessage?: (_m: ICourierMessage) => void;
-  getMessagesInit: () => void;
-  getMessageSuccess: (_p: { payload: GetMessagesSuccessPayloadType }) => void;
-  messagesStopLoading: () => void;
-  messages: MessageType[];
-  startCursor: string | null | undefined;
-  isLoading: boolean;
-  updateMessageRead: (_p: {
-    read: boolean;
-    selectedId: string;
-    isRead: isReadType;
-  }) => void;
-  messagesCount: number;
-  setMessagesCount: React.Dispatch<React.SetStateAction<number>>;
 };
 
 const CourierContext = createContext<CourierContextType>({
   brandConfig: brandInitialConfig,
   isBrandLoading: false,
   isBrandLoadingError: false,
-  unReadBellIconMessageCount: 0,
-  nudgeBellIcon: () => {},
-  setUnReadBellIconMessageCount: () => {},
-  getMessagesInit: () => {},
-  getMessageSuccess: () => {},
-  messagesStopLoading: () => {},
-  messages: [],
-  startCursor: null,
-  isLoading: false,
-  updateMessageRead: () => {},
-  messagesCount: 0,
-  setMessagesCount: () => {},
 });
 
 const verifyAllValidProperties = (obj: BrandConfig) =>
@@ -116,6 +69,7 @@ const ImessageToMessageTypeConverter = (
   };
   return convertedMessage;
 };
+
 function CourierReactNativeProvider({
   children,
   userId,
@@ -127,9 +81,42 @@ function CourierReactNativeProvider({
     useState<BrandConfig>(brandInitialConfig);
   const [isBrandLoading, setIsBrandLoading] = useState(true);
   const [isBrandLoadingError, setIsBrandLoadingError] = useState(false);
-  const [unReadBellIconMessageCount, setUnReadBellIconMessageCount] =
-    useState(0);
-  const [messagesCount, setMessagesCount] = useState(0);
+
+  const {
+    notificationsCount: unreadNotificationsCount,
+    setNotificationsCount: setUnreadNotificationsCount,
+    getNotificationsInit: getUnreadNotificationsInit,
+    getNotificationsSuccess: getUnreadNotificationsSuccess,
+    notificationsStopLoading: unreadNotificationsStopLoading,
+    notifications: unreadNotifications,
+    isLoading: unreadNotificationsIsLoading,
+    startCursor: unreadNotificationsStartCursor,
+    setNotifications: setUnreadNotifications,
+    fetchNotification: fetchUnreadNotifications,
+    fetchMoreNotifications: fetchMoreUnreadNotifications,
+  } = useMessageHook({
+    notificationType: 'unread',
+    clientKey,
+    userId,
+  });
+
+  const {
+    notificationsCount: allNotificationsCount,
+    setNotificationsCount: setAllNotificationsCount,
+    getNotificationsInit: getAllNotificationsInit,
+    getNotificationsSuccess: getAllNotificationsSuccess,
+    notificationsStopLoading: allNotificationsStopLoading,
+    notifications: allNotifications,
+    isLoading: allNotificationsIsLoading,
+    startCursor: allNotificationsStartCursor,
+    setNotifications: setAllNotifications,
+    fetchNotification: fetchAllNotifications,
+    fetchMoreNotifications: fetchMoreAllCategoryNotifications,
+  } = useMessageHook({
+    notificationType: 'all',
+    clientKey,
+    userId,
+  });
 
   const courierClient = useMemo(
     () =>
@@ -143,97 +130,37 @@ function CourierReactNativeProvider({
   const brandApis = Brands({ client: courierClient });
   const { getMessageCount } = Messages({ client: courierClient });
   const courier = useCourier();
-  const [{ messages, isLoading, startCursor }, dispatch] = useReducer(
-    messagesReducer,
-    messagesInitialState
-  );
-
-  const spinValue = useRef(new Animated.Value(0)).current;
-
-  const stable = () =>
-    Animated.timing(spinValue, {
-      toValue: 0,
-      useNativeDriver: true,
-      duration: CENTER_DURATION,
-      easing: Easing.ease,
-    }).start();
-
-  const goRight = () =>
-    Animated.timing(spinValue, {
-      toValue: -9,
-      useNativeDriver: true,
-      duration: RIGHT_DURATION,
-      easing: Easing.ease,
-    }).start(stable);
-
-  const goLeft = () =>
-    Animated.timing(spinValue, {
-      toValue: 10,
-      useNativeDriver: true,
-      duration: LEFT_DURATION,
-      easing: Easing.ease,
-    }).start(goRight);
-
-  const spin = spinValue.interpolate({
-    inputRange: [-360, 360],
-    outputRange: ['-360deg', '360deg'],
-  });
+  const { nudgeBellIcon } = useBellIcon();
 
   const updateUnreadMessageCount = async () => {
     try {
       const updatedUnreadMessageCount = await getMessageCount({
         isRead: false,
       });
-      setUnReadBellIconMessageCount(updatedUnreadMessageCount);
+      setUnreadNotificationsCount(updatedUnreadMessageCount);
     } catch (e) {
       console.error({ e });
     }
-  };
-
-  const nudgeBellIcon = () => {
-    goLeft();
   };
 
   useEffect(() => {
     courier.transport.intercept((message: ICourierMessage) => {
       // converting ICourierMessage to MessageType
       const newMessage = ImessageToMessageTypeConverter(message);
-      const updatedMessages = [newMessage, ...messages];
-      dispatch(setMessagesAction({ payload: { messages: updatedMessages } }));
+      console.log('newMessageType', newMessage);
+      setAllNotifications([newMessage, ...allNotifications]);
+      setUnreadNotifications([newMessage, ...unreadNotifications]);
       nudgeBellIcon();
-      setUnReadBellIconMessageCount((prev) => prev + 1);
-      setMessagesCount((prev) => prev + 1);
+      setUnreadNotificationsCount((prev) => prev + 1);
+      setAllNotificationsCount((prev) => prev + 1);
       if (typeof onNewMessage === 'function') onNewMessage(message);
     });
-  }, [JSON.stringify(messages)]);
-
-  const getMessagesInit = () => dispatch(getMessagesInitAction());
-  const getMessageSuccess = ({
-    payload,
-  }: {
-    payload: GetMessagesSuccessPayloadType;
-  }) => dispatch(getMessagesSuccessAction({ payload }));
-  const messagesStopLoading = () => dispatch(messageStopLoadingAction());
-  const updateMessageRead = ({
-    read,
-    selectedId,
-    isRead,
-  }: {
-    read: boolean;
-    selectedId: string;
-    isRead: isReadType;
-  }) => {
-    const updatedMessages = messages.map((message) => {
-      if (message.id === selectedId) {
-        if (isRead === false && read === true) {
-          setMessagesCount((prev) => prev - 1);
-        }
-        return { ...message, read };
-      }
-      return message;
-    });
-    dispatch(setMessagesAction({ payload: { messages: updatedMessages } }));
-  };
+  }, [
+    JSON.stringify(allNotifications),
+    JSON.stringify(unreadNotifications),
+    unreadNotificationsCount,
+    allNotificationsCount,
+  ]);
 
   useEffect(() => {
     const getBrands = async () => {
@@ -257,30 +184,49 @@ function CourierReactNativeProvider({
   }, []);
 
   return (
-    <CourierContext.Provider
+    <UnreadNotificationsContext.Provider
       value={{
-        courierClient,
-        brandConfig,
-        isBrandLoading,
-        isBrandLoadingError,
-        spin,
-        unReadBellIconMessageCount,
-        nudgeBellIcon,
-        setUnReadBellIconMessageCount,
-        onNewMessage,
-        getMessagesInit,
-        getMessageSuccess,
-        messagesStopLoading,
-        messages,
-        startCursor,
-        isLoading,
-        updateMessageRead,
-        messagesCount,
-        setMessagesCount,
+        getNotificationsInit: getUnreadNotificationsInit,
+        getNotificationsSuccess: getUnreadNotificationsSuccess,
+        stopLoading: unreadNotificationsStopLoading,
+        notifications: unreadNotifications,
+        startCursor: unreadNotificationsStartCursor,
+        isLoading: unreadNotificationsIsLoading,
+        notificationsCount: unreadNotificationsCount,
+        setNotificationsCount: setUnreadNotificationsCount,
+        fetchNotification: fetchUnreadNotifications,
+        fetchMoreNotifications: fetchMoreUnreadNotifications,
+        setNotifications: setUnreadNotifications,
       }}
     >
-      {children}
-    </CourierContext.Provider>
+      <AllNotificationsContext.Provider
+        value={{
+          getNotificationsInit: getAllNotificationsInit,
+          getNotificationsSuccess: getAllNotificationsSuccess,
+          stopLoading: allNotificationsStopLoading,
+          notifications: allNotifications,
+          startCursor: allNotificationsStartCursor,
+          isLoading: allNotificationsIsLoading,
+          notificationsCount: allNotificationsCount,
+          setNotificationsCount: setAllNotificationsCount,
+          fetchNotification: fetchAllNotifications,
+          fetchMoreNotifications: fetchMoreAllCategoryNotifications,
+          setNotifications: setAllNotifications,
+        }}
+      >
+        <CourierContext.Provider
+          value={{
+            courierClient,
+            brandConfig,
+            isBrandLoading,
+            isBrandLoadingError,
+            onNewMessage,
+          }}
+        >
+          {children}
+        </CourierContext.Provider>
+      </AllNotificationsContext.Provider>
+    </UnreadNotificationsContext.Provider>
   );
 }
 
@@ -317,45 +263,5 @@ export const useBrand = () => {
     isBrandLoading,
     disableCourierFooter,
     isBrandLoadingError,
-  };
-};
-
-export const useBellIcon = () => {
-  const {
-    spin,
-    unReadBellIconMessageCount,
-    nudgeBellIcon,
-    setUnReadBellIconMessageCount,
-  } = useContext(CourierContext);
-  return {
-    spin,
-    unReadBellIconMessageCount,
-    nudgeBellIcon,
-    setUnReadBellIconMessageCount,
-  };
-};
-
-export const useCourierProviderMessage = () => {
-  const {
-    getMessagesInit,
-    getMessageSuccess,
-    messagesStopLoading,
-    messages,
-    startCursor,
-    isLoading,
-    updateMessageRead,
-    messagesCount,
-    setMessagesCount,
-  } = useContext(CourierContext);
-  return {
-    getMessageSuccess,
-    getMessagesInit,
-    messagesStopLoading,
-    messages,
-    startCursor,
-    isLoading,
-    updateMessageRead,
-    messagesCount,
-    setMessagesCount,
   };
 };

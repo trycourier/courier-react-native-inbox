@@ -4,6 +4,7 @@ import type {
   GET_MESSAGES_SUCCESS,
   MESSAGES_STOP_LOADING,
   SET_MESSAGES,
+  SET_MESSAGE_COUNT,
 } from './MessagesActions';
 
 export interface TrackingIds {
@@ -45,8 +46,14 @@ export interface SetMessages {
   payload: { messages: MessageType[] };
 }
 
+export interface UpdateMessageCount {
+  type: typeof SET_MESSAGE_COUNT;
+  payload: { messageCount: number };
+}
+
 export interface MessagesReducerState extends GetMessagesSuccessResp {
   isLoading: boolean;
+  messageCount: number;
 }
 
 export interface GetMessages {
@@ -54,7 +61,7 @@ export interface GetMessages {
 }
 
 export interface GetMessagesSuccessPayloadType
-  extends Omit<MessagesReducerState, 'isLoading'> {}
+  extends Omit<MessagesReducerState, 'isLoading' | 'messageCount'> {}
 
 export interface GetMessagesSuccess {
   type: typeof GET_MESSAGES_SUCCESS;
@@ -69,6 +76,7 @@ export type InterfaceMessageReducerActionType =
   | GetMessages
   | GetMessagesSuccess
   | MessagesStopLoading
-  | SetMessages;
+  | SetMessages
+  | UpdateMessageCount;
 
 export type isReadType = boolean | 'all';

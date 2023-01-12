@@ -1,13 +1,12 @@
 import { Animated, View } from 'react-native';
 import React, { useMemo } from 'react';
 
-import {
-  useBellIcon,
-  useBrand,
-} from '../../context/CourierReactNativeProvider';
+import { useUnreadNotifications } from '../../context/UnreadNotificationsContext';
+import { useBrand } from '../../context/CourierReactNativeProvider';
 import bellIcon from '../../assets/bell.png';
 import { SvgDot } from '../SvgDot';
 import type { Dotsize } from '../SvgDot';
+import { useBellIcon } from '../../context/BellIconContextProvider';
 
 const MD_SIZE = 40;
 const LG_SIZE = 80;
@@ -60,18 +59,19 @@ function BellIcon({ size = 'md', showUnreadMessageCount, render }: PropType) {
     colors: { primary },
   } = useBrand();
 
-  const { spin, unReadBellIconMessageCount } = useBellIcon();
+  const { spin } = useBellIcon();
+  const { unreadNotificationsCount } = useUnreadNotifications();
 
   const { imageSize, dotRight, dotTop, dotSize, bellIconContainerWidth } =
     useMemo(() => getNumericSize(size), [size]);
 
   if (!spin) return null;
 
-  if (typeof render === 'function') return render(unReadBellIconMessageCount);
+  if (typeof render === 'function') return render(unreadNotificationsCount);
 
   return (
     <View style={{ position: 'relative', width: bellIconContainerWidth }}>
-      {unReadBellIconMessageCount > 0 && (
+      {unreadNotificationsCount > 0 && (
         <SvgDot
           size={dotSize}
           color={primary}
@@ -81,7 +81,7 @@ function BellIcon({ size = 'md', showUnreadMessageCount, render }: PropType) {
             top: dotTop,
             zIndex: 1,
           }}
-          value={unReadBellIconMessageCount}
+          value={unreadNotificationsCount}
           showNumber={showUnreadMessageCount}
         />
       )}

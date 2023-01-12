@@ -3,6 +3,7 @@ import {
   GET_MESSAGES_INIT,
   GET_MESSAGES_SUCCESS,
   MESSAGES_STOP_LOADING,
+  SET_MESSAGE_COUNT,
 } from './MessagesActions';
 import type {
   InterfaceMessageReducerActionType,
@@ -14,6 +15,7 @@ export const messagesInitialState: MessagesReducerState = {
   messages: [],
   startCursor: undefined,
   appendMessages: false,
+  messageCount: 0,
 };
 
 export const messagesReducer = (
@@ -38,6 +40,11 @@ export const messagesReducer = (
         isLoading: false,
       };
     case SET_MESSAGES:
+      return {
+        ...state,
+        ...action.payload,
+      };
+    case SET_MESSAGE_COUNT:
       return {
         ...state,
         ...action.payload,
