@@ -68,6 +68,10 @@ const styles = StyleSheet.create({
     fontWeight: BOLD,
     textAlign: 'center',
   },
+  tabBorder: {
+    borderBottomColor: 'rgba(0,0,0,0.1)',
+    borderBottomWidth: 1,
+  },
 });
 
 type PropType = {
@@ -160,18 +164,20 @@ function CourierScreen({ onMessageClick }: PropType) {
                 }
               />
             </View>
-            <Tabs>
-              <Tab
-                title="Unread"
-                isActive={activeTab === 'Unread'}
-                onPress={setUnreadActive}
-              />
-              <Tab
-                title="All notifications"
-                isActive={activeTab === 'All notifications'}
-                onPress={setAllNotificationsActive}
-              />
-            </Tabs>
+            <View style={styles.tabBorder}>
+              <Tabs>
+                <Tab
+                  title="Unread"
+                  isActive={activeTab === 'Unread'}
+                  onPress={setUnreadActive}
+                />
+                <Tab
+                  title="All notifications"
+                  isActive={activeTab === 'All notifications'}
+                  onPress={setAllNotificationsActive}
+                />
+              </Tabs>
+            </View>
           </View>
           <View style={styles.flatListContainerStyle}>
             {activeTab === 'All notifications' && (

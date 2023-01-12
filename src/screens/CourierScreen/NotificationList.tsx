@@ -5,10 +5,10 @@ import {
   Text,
   TextStyle,
   StyleSheet,
-  ActivityIndicator,
 } from 'react-native';
 import React, { useState } from 'react';
 import { Events } from '@trycourier/client-graphql';
+import EmptyMessage from '../../components/EmptyMessage/EmptyMessage';
 import { useUnreadNotifications } from '../../context/UnreadNotificationsContext';
 import { useAllNotifications } from '../../context/AllNotificationsContext';
 import type {
@@ -212,40 +212,45 @@ function NotificationList({
     <>
       <FlatList
         data={notifications}
-        renderItem={({ item, index }) => (
-          <TouchableOpacity
-            onPress={
-              typeof onMessageClick === 'function'
-                ? () => onMessageClick(item)
-                : () => {}
-            }
-          >
-            <Message
-              message={item}
-              onPress={handleMessageSelection}
-              onActionSuccess={() => {
-                if (item.read) return;
-                handleUnreadMessageUpdate({
-                  selectedMessage: item,
-                  isMarkingRead: true,
-                });
-                toggleAllMessageCategoryStatus({ selectedMessage: item });
-              }}
-              isFirst={index === 0}
-            />
-          </TouchableOpacity>
-        )}
+        renderItem={({ item, index }) => {
+          return (
+            <>
+              <TouchableOpacity
+                onPress={
+                  typeof onMessageClick === 'function'
+                    ? () => onMessageClick(item)
+                    : () => {}
+                }
+              >
+                <Message
+                  message={item}
+                  onPress={handleMessageSelection}
+                  onActionSuccess={() => {
+                    if (item.read) return;
+                    handleUnreadMessageUpdate({
+                      selectedMessage: item,
+                      isMarkingRead: true,
+                    });
+                    toggleAllMessageCategoryStatus({ selectedMessage: item });
+                  }}
+                  isFirst={index === 0}
+                />
+              </TouchableOpacity>
+              {index === notifications.length - 1 && isLoading && (
+                <View style={styles.infiniteScrollLoaderContainer}>
+                  <EmptyMessage />
+                </View>
+              )}
+            </>
+          );
+        }}
         keyExtractor={({ id }) => id}
         onEndReached={fetchMoreNotifications}
         onEndReachedThreshold={0.01}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
       />
-      {isLoading && (
-        <View style={styles.infiniteScrollLoaderContainer}>
-          <ActivityIndicator />
-        </View>
-      )}
+
       <BottomModal open={isBottomModalOpen} onClose={closeBottomModal}>
         <View style={styles.bottomMenuContainer}>
           {typeof selectedMessage !== 'undefined' && (
