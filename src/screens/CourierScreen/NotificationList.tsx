@@ -5,10 +5,10 @@ import {
   Text,
   TextStyle,
   StyleSheet,
+  ActivityIndicator,
 } from 'react-native';
 import React, { useState } from 'react';
 import { Events } from '@trycourier/client-graphql';
-import EmptyMessage from '../../components/EmptyMessage/EmptyMessage';
 import { useUnreadNotifications } from '../../context/UnreadNotificationsContext';
 import { useAllNotifications } from '../../context/AllNotificationsContext';
 import type {
@@ -238,7 +238,7 @@ function NotificationList({
               </TouchableOpacity>
               {index === notifications.length - 1 && isLoading && (
                 <View style={styles.infiniteScrollLoaderContainer}>
-                  <EmptyMessage />
+                  <ActivityIndicator />
                 </View>
               )}
             </>
