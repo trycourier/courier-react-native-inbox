@@ -40,6 +40,7 @@ const styles = StyleSheet.create({
   },
   infiniteScrollLoaderContainer: {
     marginBottom: 6,
+    padding: 16,
   },
   bottomMenuContainer: {
     alignItems: 'center',
