@@ -5,16 +5,27 @@ import React, {
   createContext,
   useContext,
 } from 'react';
-import { Brands, createCourierClient } from '@trycourier/client-graphql';
+import {
+  Brands,
+  createCourierClient,
+  Messages,
+} from '@trycourier/client-graphql';
 import type { Client } from 'urql';
+import { ICourierMessage, useCourier } from '@trycourier/react-provider';
+import { useMessageHook } from '../hooks/useMessage/MessagesStore/useMessagesHook';
+import type { MessageType } from '../hooks/useMessage/MessagesStore/Messagestypes';
 import type { BrandConfig } from './Brands/brands.types';
 import { brandInitialConfig } from './Brands/initialConfig';
+import { AllNotificationsContext } from './AllNotificationsContext';
+import { UnreadNotificationsContext } from './UnreadNotificationsContext';
+import { useBellIcon } from './BellIconContextProvider';
 
 export type Props = {
   children: JSX.Element | JSX.Element[];
   userId: string;
   clientKey: string;
   brandId: string;
+  onNewMessage?: (_m: ICourierMessage) => void;
 };
 
 type CourierContextType = {
@@ -22,6 +33,7 @@ type CourierContextType = {
   brandConfig: BrandConfig;
   isBrandLoading: boolean;
   isBrandLoadingError?: boolean;
+  onNewMessage?: (_m: ICourierMessage) => void;
 };
 
 const CourierContext = createContext<CourierContextType>({
@@ -37,16 +49,74 @@ const verifyAllValidProperties = (obj: BrandConfig) =>
       Boolean(obj[key as keyof typeof brandInitialConfig])
   );
 
+const ImessageToMessageTypeConverter = (
+  message: ICourierMessage
+): MessageType => {
+  const convertedMessage: MessageType = {
+    content: {
+      title: message.title as string,
+      body: message.body as string,
+      trackingIds: message.data?.trackingIds ?? {},
+      blocks: message.blocks || [],
+      __typename: '',
+    },
+    id: message.data?.trackingUrl || Math.floor(Math.random() * 1e7).toString(),
+    messageId:
+      message.data?.trackingUrl || Math.floor(Math.random() * 1e7).toString(),
+    created: new Date().toISOString(),
+    read: false,
+    __typename: '',
+  };
+  return convertedMessage;
+};
+
 function CourierReactNativeProvider({
   children,
   userId,
   clientKey,
   brandId,
+  onNewMessage,
 }: Props) {
   const [brandConfig, setBrandsConfig] =
     useState<BrandConfig>(brandInitialConfig);
   const [isBrandLoading, setIsBrandLoading] = useState(true);
   const [isBrandLoadingError, setIsBrandLoadingError] = useState(false);
+
+  const {
+    notificationsCount: unreadNotificationsCount,
+    setNotificationsCount: setUnreadNotificationsCount,
+    getNotificationsInit: getUnreadNotificationsInit,
+    getNotificationsSuccess: getUnreadNotificationsSuccess,
+    notificationsStopLoading: unreadNotificationsStopLoading,
+    notifications: unreadNotifications,
+    isLoading: unreadNotificationsIsLoading,
+    startCursor: unreadNotificationsStartCursor,
+    setNotifications: setUnreadNotifications,
+    fetchNotification: fetchUnreadNotifications,
+    fetchMoreNotifications: fetchMoreUnreadNotifications,
+  } = useMessageHook({
+    notificationType: 'unread',
+    clientKey,
+    userId,
+  });
+
+  const {
+    notificationsCount: allNotificationsCount,
+    setNotificationsCount: setAllNotificationsCount,
+    getNotificationsInit: getAllNotificationsInit,
+    getNotificationsSuccess: getAllNotificationsSuccess,
+    notificationsStopLoading: allNotificationsStopLoading,
+    notifications: allNotifications,
+    isLoading: allNotificationsIsLoading,
+    startCursor: allNotificationsStartCursor,
+    setNotifications: setAllNotifications,
+    fetchNotification: fetchAllNotifications,
+    fetchMoreNotifications: fetchMoreAllCategoryNotifications,
+  } = useMessageHook({
+    notificationType: 'all',
+    clientKey,
+    userId,
+  });
 
   const courierClient = useMemo(
     () =>
@@ -58,6 +128,39 @@ function CourierReactNativeProvider({
   );
 
   const brandApis = Brands({ client: courierClient });
+  const { getMessageCount } = Messages({ client: courierClient });
+  const courier = useCourier();
+  const { nudgeBellIcon } = useBellIcon();
+
+  const updateUnreadMessageCount = async () => {
+    try {
+      const updatedUnreadMessageCount = await getMessageCount({
+        isRead: false,
+      });
+      setUnreadNotificationsCount(updatedUnreadMessageCount);
+    } catch (e) {
+      console.error({ e });
+    }
+  };
+
+  useEffect(() => {
+    courier.transport.intercept((message: ICourierMessage) => {
+      // converting ICourierMessage to MessageType
+      const newMessage = ImessageToMessageTypeConverter(message);
+      console.log('newMessageType', newMessage);
+      setAllNotifications([newMessage, ...allNotifications]);
+      setUnreadNotifications([newMessage, ...unreadNotifications]);
+      nudgeBellIcon();
+      setUnreadNotificationsCount((prev) => prev + 1);
+      setAllNotificationsCount((prev) => prev + 1);
+      if (typeof onNewMessage === 'function') onNewMessage(message);
+    });
+  }, [
+    JSON.stringify(allNotifications),
+    JSON.stringify(unreadNotifications),
+    unreadNotificationsCount,
+    allNotificationsCount,
+  ]);
 
   useEffect(() => {
     const getBrands = async () => {
@@ -77,27 +180,65 @@ function CourierReactNativeProvider({
       }
     };
     getBrands();
+    updateUnreadMessageCount();
   }, []);
 
   return (
-    <CourierContext.Provider
+    <UnreadNotificationsContext.Provider
       value={{
-        courierClient,
-        brandConfig,
-        isBrandLoading,
-        isBrandLoadingError,
+        getNotificationsInit: getUnreadNotificationsInit,
+        getNotificationsSuccess: getUnreadNotificationsSuccess,
+        stopLoading: unreadNotificationsStopLoading,
+        notifications: unreadNotifications,
+        startCursor: unreadNotificationsStartCursor,
+        isLoading: unreadNotificationsIsLoading,
+        notificationsCount: unreadNotificationsCount,
+        setNotificationsCount: setUnreadNotificationsCount,
+        fetchNotification: fetchUnreadNotifications,
+        fetchMoreNotifications: fetchMoreUnreadNotifications,
+        setNotifications: setUnreadNotifications,
       }}
     >
-      {children}
-    </CourierContext.Provider>
+      <AllNotificationsContext.Provider
+        value={{
+          getNotificationsInit: getAllNotificationsInit,
+          getNotificationsSuccess: getAllNotificationsSuccess,
+          stopLoading: allNotificationsStopLoading,
+          notifications: allNotifications,
+          startCursor: allNotificationsStartCursor,
+          isLoading: allNotificationsIsLoading,
+          notificationsCount: allNotificationsCount,
+          setNotificationsCount: setAllNotificationsCount,
+          fetchNotification: fetchAllNotifications,
+          fetchMoreNotifications: fetchMoreAllCategoryNotifications,
+          setNotifications: setAllNotifications,
+        }}
+      >
+        <CourierContext.Provider
+          value={{
+            courierClient,
+            brandConfig,
+            isBrandLoading,
+            isBrandLoadingError,
+            onNewMessage,
+          }}
+        >
+          {children}
+        </CourierContext.Provider>
+      </AllNotificationsContext.Provider>
+    </UnreadNotificationsContext.Provider>
   );
 }
+
+CourierReactNativeProvider.defaultProps = {
+  onNewMessage: undefined,
+};
 
 export default CourierReactNativeProvider;
 
 export const useReactNativeCourier = () => {
-  const { courierClient } = useContext(CourierContext);
-  return { courierClient };
+  const { courierClient, onNewMessage } = useContext(CourierContext);
+  return { courierClient, onNewMessage };
 };
 
 export const useBrand = () => {

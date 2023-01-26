@@ -1,4 +1,3 @@
-
 # @trycourier/react-native-inbox"
 
 a react native library for trycourier integration
@@ -6,52 +5,34 @@ a react native library for trycourier integration
 ## Installation
 
 ```sh
-npm install @trycourier/react-native-inbox @react-navigation/native
+npm install @trycourier/react-native-inbox react-native-linear-gradient
 ```
 
 ```sh
-yarn add @trycourier/react-native-inbox @react-navigation/native
+yarn add @trycourier/react-native-inbox react-native-linear-gradient
 ```
 
-## Usage 
-
-wrap your parent component using `CourierProvider`, provide  `clientKey`,  `userId` , `brandId` as props
-
-### if you are using react-native cli 
-```sh
-yarn add react-native-linear-gradient
-```
-
-```js
-import LinearGradient from 'react-native-linear-gradient';
-```
-
-### if you are using expo-cli
+for ios development, navigate to ios folder in project repository and update pod
 
 ```sh
-yarn add react-native-linear-gradient 
+pod update
 ```
-```js
-import { LinearGradient } from 'expo-linear-gradient';
-```
-wrap your parent component with CourierProvider
 
+## Usage
 
-### 
+wrap your parent component using `CourierProvider`, provide `clientKey`, `userId` , `brandId` as props
+
+###
+
 ```js
 import React from 'react';
 import { CourierProvider } from '@trycourier/react-native-inbox';
 
 export default function App() {
   return (
-      <CourierProvider
-        clientKey={CLIENT_KEY}
-        userId={USER_ID}
-        brandId={BRAND_ID}
-        linearGradientProvider={LinearGradient}
-      >
+    <CourierProvider clientKey={CLIENT_KEY} userId={USER_ID} brandId={BRAND_ID}>
       .....
-      </CourierProvider>
+    </CourierProvider>
   );
 }
 ```
@@ -64,10 +45,14 @@ import { CourierScreen } from '@trycourier/react-native-inbox';
 const Demo = () => {
   return (
     <View>
-      <CourierScreen/>
+      ...
+      <CourierScreen onMessageClick={message => {
+          console.log('clicked message data', message);
+      }} />
+      ...
     </View>
-  )
-}
+  );
+};
 ```
 
 ### the bellIcon
@@ -78,22 +63,41 @@ import { BellIcon } from '@trycourier/react-native-inbox';
 function BellIconScreen() {
   return (
     <View>
-        <BellIcon showUnreadMessageCount size="md" />
+      ...
+      <BellIcon showUnreadMessageCount size="md" />
+      ...
     </View>
   );
 }
 ```
-|  prop| description | default | type |
-|--|--|--|--|
-|showUnreadMessageCount | shows number of unread messages as badge|	 false | boolean
-| size | sets height and width of the bell icon and badge size| "md" | "md" \| "sm" \| "lg" 
-|render| renders custom component| undefined | (_numberOfUnreadMessages: number) => JSX.Element|
-|onMessage| custom function to execute on getting a new Message | undefined | (_numberOfUnreadMessages: number) => void
 
-**Note**:  BellIcon must be used as a child component of `NavigationContainer` to work.
+## CourierProvider props
 
-you can find a proper implementation example [here](https://github.com/trycourier/courier-react-native-inbox/tree/main/example).
+---
 
+| prop         | description                                         | default   | type                               |
+| ------------ | --------------------------------------------------- | --------- | ---------------------------------- |
+| onNewMessage | custom function to execute on getting a new Message | undefined | (message: ICourierMessage) => void |
+
+## CourierScreen props
+
+---
+
+| prop           | description                                      | default   | type                           |
+| -------------- | ------------------------------------------------ | --------- | ------------------------------ |
+| onMessageClick | custom function to execute on pressing a Message | undefined | (message: MessageType) => void |
+
+## BellIcon props
+
+---
+
+| prop                   | description                                           | default   | type                                              |
+| ---------------------- | ----------------------------------------------------- | --------- | ------------------------------------------------- |
+| showUnreadMessageCount | shows number of unread messages as badge              | false     | boolean                                           |
+| size                   | sets height and width of the bell icon and badge size | "md"      | "md" \| "sm" \| "lg"                              |
+| render                 | renders custom component                              | undefined | (\_numberOfUnreadMessages: number) => JSX.Element |
+
+you can find a proper implementation example [here](https://github.com/trycourier/courier-react-native-inbox/tree/main/exampleRn).
 
 ## License
 

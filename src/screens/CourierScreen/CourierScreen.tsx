@@ -1,15 +1,18 @@
 import { View, Text, StyleSheet } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { ViewStyle } from 'react-native';
 
 import LinearGradientRn from 'react-native-linear-gradient';
+import type { MessageType } from 'src/hooks/useMessage/MessagesStore/Messagestypes';
+import { useUnreadNotifications } from '../../context/UnreadNotificationsContext';
+import { useAllNotifications } from '../../context/AllNotificationsContext';
 import { FullScreenIndicator, SvgDot } from '../../components';
 import { WHITE } from '../../constants/colors';
 import { BOLD, SEMI_BOLD } from '../../constants/fontSize';
 import { Tab, Tabs } from '../../components/Tabs';
-import MessageList from './MessageList/MessageList';
 import { Footer } from '../../components/Footer';
 import { useBrand } from '../../context/CourierReactNativeProvider';
+import NotificationList from './NotificationList';
 
 const UNREAD_TAB_NAME = 'Unread';
 const ALL_NOTIFICATIONS_TAB_NAME = 'All notifications';
@@ -28,7 +31,6 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     backgroundColor: WHITE,
-    marginBottom: 4,
   },
   headerStyle: {
     flexDirection: 'row',
@@ -66,19 +68,46 @@ const styles = StyleSheet.create({
     fontWeight: BOLD,
     textAlign: 'center',
   },
+  tabBorder: {
+    borderBottomColor: 'rgba(0,0,0,0.1)',
+    borderBottomWidth: 1,
+  },
 });
 
-function CourierScreen() {
-  const [messagesCount, setMessagesCount] = useState(0);
+type PropType = {
+  onMessageClick?: (_m: MessageType) => void;
+};
+
+function CourierScreen({ onMessageClick }: PropType) {
+  const {
+    unreadNotificationsCount,
+    unreadNotifications,
+    fetchUnreadNotifications,
+    fetchMoreUnreadNotifications,
+    unreadNotificationsIsLoading,
+  } = useUnreadNotifications();
+
+  const {
+    allNotificationsCount,
+    allNotifications,
+    fetchAllNotifications,
+    fetchMoreAllCategoryNotifications,
+    allNotificationsIsLoading,
+  } = useAllNotifications();
+
+  useEffect(() => {
+    fetchUnreadNotifications({ prevMessages: [] });
+    fetchAllNotifications({ prevMessages: [] });
+  }, []);
+
   const [activeTab, setActiveTab] = useState<
     typeof UNREAD_TAB_NAME | typeof ALL_NOTIFICATIONS_TAB_NAME
   >('Unread');
+
   const setUnreadActive = () => {
-    setMessagesCount(0);
     setActiveTab('Unread');
   };
   const setAllNotificationsActive = () => {
-    setMessagesCount(0);
     setActiveTab('All notifications');
   };
 
@@ -125,27 +154,47 @@ function CourierScreen() {
           <View style={headerContainerStyle}>
             <View style={styles.headerStyle}>
               <Text style={styles.headerTextStyle}>Inbox</Text>
-              <SvgDot color={primary} size={26} value={messagesCount} />
+              <SvgDot
+                color={primary}
+                size={26}
+                value={
+                  activeTab === 'All notifications'
+                    ? allNotificationsCount
+                    : unreadNotificationsCount
+                }
+              />
             </View>
-            <Tabs>
-              <Tab
-                title="Unread"
-                isActive={activeTab === 'Unread'}
-                onPress={setUnreadActive}
-              />
-              <Tab
-                title="All notifications"
-                isActive={activeTab === 'All notifications'}
-                onPress={setAllNotificationsActive}
-              />
-            </Tabs>
+            <View style={styles.tabBorder}>
+              <Tabs>
+                <Tab
+                  title="Unread"
+                  isActive={activeTab === 'Unread'}
+                  onPress={setUnreadActive}
+                />
+                <Tab
+                  title="All notifications"
+                  isActive={activeTab === 'All notifications'}
+                  onPress={setAllNotificationsActive}
+                />
+              </Tabs>
+            </View>
           </View>
           <View style={styles.flatListContainerStyle}>
             {activeTab === 'All notifications' && (
-              <MessageList isRead="all" setMessagesCount={setMessagesCount} />
+              <NotificationList
+                notifications={allNotifications}
+                onMessageClick={onMessageClick}
+                fetchMoreNotifications={fetchMoreAllCategoryNotifications}
+                isLoading={allNotificationsIsLoading}
+              />
             )}
             {activeTab === 'Unread' && (
-              <MessageList isRead={false} setMessagesCount={setMessagesCount} />
+              <NotificationList
+                notifications={unreadNotifications}
+                fetchMoreNotifications={fetchMoreUnreadNotifications}
+                onMessageClick={onMessageClick}
+                isLoading={unreadNotificationsIsLoading}
+              />
             )}
           </View>
         </View>
@@ -154,5 +203,9 @@ function CourierScreen() {
     </LinearGradient>
   );
 }
+
+CourierScreen.defaultProps = {
+  onMessageClick: undefined,
+};
 
 export default CourierScreen;

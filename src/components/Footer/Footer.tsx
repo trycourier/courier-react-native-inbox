@@ -1,8 +1,9 @@
+/* eslint global-require: "off" */
+
 import { View, StyleSheet, Image } from 'react-native';
 import React from 'react';
 import { LIGHT_GRAY } from '../../constants/colors';
 import { useBrand } from '../../context/CourierReactNativeProvider';
-import poweredByCourierLogo from '../../assets/PoweredByCourier.png';
 
 const styles = StyleSheet.create({
   container: {
@@ -19,7 +20,7 @@ function Footer() {
   if (disableCourierFooter) return null;
   return (
     <View style={styles.container}>
-      <Image source={poweredByCourierLogo} />
+      <Image source={require('../../assets/footer-title.png')} />
     </View>
   );
 }
