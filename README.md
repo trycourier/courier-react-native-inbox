@@ -46,7 +46,9 @@ const Demo = () => {
   return (
     <View>
       ...
-      <CourierScreen />
+      <CourierScreen onMessageClick={message => {
+          console.log('clicked message data', message);
+      }} />
       ...
     </View>
   );
