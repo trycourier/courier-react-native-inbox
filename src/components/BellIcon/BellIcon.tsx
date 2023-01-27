@@ -70,21 +70,13 @@ function BellIcon({ size = 'md', showUnreadMessageCount, render }: PropType) {
   if (typeof render === 'function') return render(unreadNotificationsCount);
 
   return (
-    <View style={{ position: 'relative', width: bellIconContainerWidth }}>
-      {unreadNotificationsCount > 0 && (
-        <SvgDot
-          size={dotSize}
-          color={primary}
-          style={{
-            position: 'absolute',
-            right: dotRight,
-            top: dotTop,
-            zIndex: 1,
-          }}
-          value={unreadNotificationsCount}
-          showNumber={showUnreadMessageCount}
-        />
-      )}
+    <View
+      style={{
+        position: 'relative',
+        width: bellIconContainerWidth,
+        height: imageSize,
+      }}
+    >
       <Animated.Image
         source={bellIcon}
         style={{
@@ -97,6 +89,19 @@ function BellIcon({ size = 'md', showUnreadMessageCount, render }: PropType) {
           ],
         }}
       />
+      {unreadNotificationsCount > 0 && (
+        <SvgDot
+          size={dotSize}
+          color={primary}
+          style={{
+            position: 'absolute',
+            right: dotRight,
+            top: dotTop,
+          }}
+          value={unreadNotificationsCount}
+          showNumber={showUnreadMessageCount}
+        />
+      )}
     </View>
   );
 }
