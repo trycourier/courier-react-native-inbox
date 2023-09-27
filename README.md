@@ -1,4 +1,8 @@
-# @trycourier/react-native-inbox"
+# This SDK is deprecated
+
+[👉 Here is the new Courier React Native SDK](https://github.com/trycourier/courier-react-native)
+
+# @trycourier/react-native-inbox
 
 a react native library for trycourier integration
 
